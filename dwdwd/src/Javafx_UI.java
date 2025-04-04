@@ -4,7 +4,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class Namu extends Application {
+public class Javafx_UI extends Application {
     @Override
     public void start(Stage primaryStage) {
         Button btn = new Button("Hello, JavaFX!");
