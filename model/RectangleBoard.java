@@ -23,8 +23,7 @@ public class RectangleBoard {
     private void createNodes() {
         for (int i = 0; i <= 4; i++) cells.put(i, new Cell(i, false));   // 바깥 지름길 제외 0-4
         for (int i = 6; i <= 9; i++) cells.put(i, new Cell(i, false));   // 바깥 지름길 제외 6-9
-        for (int i = 11; i <= 14; i++) cells.put(i, new Cell(i, false)); // 바깥 지름길 제외 11-14
-        for (int i = 16; i <= 20; i++) cells.put(i, new Cell(i, false)); // 바깥 지름길 제외 16-20
+        for (int i = 11; i <= 20; i++) cells.put(i, new Cell(i, false)); // 바깥 지름길 제외 11-20
         for (int i = 30; i <= 31; i++) cells.put(i, new Cell(i, false)); // 안 지름길 제외 30-31
         for (int i = 33; i <= 38; i++) cells.put(i, new Cell(i, false)); // 안 지름길 제외 33-38
         cells.put(5,  new Cell(5, true));								 // 지름길 5
