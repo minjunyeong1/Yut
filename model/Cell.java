@@ -18,12 +18,29 @@ public class Cell {
     /* ------------ 링크/조회 ------------ */
     public void setNext(Path p, Cell target) { next.put(p, target); }
     public Cell next(Path p) { return next.get(p); }
-    public boolean isBranch() { return next.size() > 1; }
+    //public boolean isBranch() { return next.size() > 1; }
     public int getId() { return id; }
     public boolean isBranchEntrance() { return branchEntrance; }
 
     /* ------------ 말 관리 ------------ */
-    public void enter(Piece h) { horses.add(h); }
     public void leave(Piece h) { horses.remove(h); }
     public List<Piece> horses() { return horses; }
+    //public void enter(Piece h) { horses.add(h); }
+    public List<Piece> enter(Piece newcomer){
+    	List<Piece> captured = new ArrayList<>();
+    	
+    	// 상대 말 찾기
+    	Iterator<Piece> it = horses.iterator();
+    	while (it.hasNext()) {
+    		Piece p = it.next();
+    		if (p.getOwner() != newcomer.getOwner()) {
+    			captured.add(p);
+    			it.remove();
+    		}
+    	}
+    	
+    	horses.add(newcomer);
+    	
+    	return captured;
+    }
 }

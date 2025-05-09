@@ -15,7 +15,9 @@ public class Player {
         this.name = name;
         this.pieces = new ArrayList<>();
         for (int i = 0; i < pieceCount; i++) {
-            pieces.add(new Piece(this, startCell));
+            Piece p = new Piece(this, startCell);
+            startCell.enter(p);
+            pieces.add(p);
         }
     }
     public void addYutResult(YutThrowResult result) {

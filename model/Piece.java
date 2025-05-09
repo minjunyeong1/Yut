@@ -1,5 +1,7 @@
 package yutgame.model;
 
+import java.util.*;
+
 /**
  * Represents a single game piece.
  */
@@ -13,7 +15,8 @@ public class Piece {
         this.position = startCell;
     }
 
-    public void move(int steps) {
+    public List<Piece> move(int steps) {
+    	List<Piece> captured = new ArrayList<>();
     	for(int i = 0; i < steps && position != null; i++) {
     		Cell next;
     		boolean firstStep = (i == 0);
@@ -32,14 +35,15 @@ public class Piece {
     		if (next == null) {
     			position.leave(this);
     			position = null;
-    			return;
+    			return captured;
     		}
     		
     		//실제 말 이동
     		position.leave(this);
     		position = next;
-    		position.enter(this);
+    		captured.addAll(position.enter(this));
     	}
+    	return captured;
     }	
     
     public Player getOwner() { return owner; }
