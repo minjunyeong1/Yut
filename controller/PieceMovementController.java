@@ -1,5 +1,6 @@
 package yutgame.controller;
 
+import java.util.*;
 import yutgame.model.Piece;
 import yutgame.model.YutThrowResult;
 
@@ -7,7 +8,7 @@ import yutgame.model.YutThrowResult;
  * Moves a piece on board according to throw result.
  */
 public class PieceMovementController {
-    public void movePiece(Piece piece, YutThrowResult result) {
+    public boolean movePiece(Piece piece, YutThrowResult result) {
         int steps;
         switch(result) {
             case BACKDO: steps = -1; break;
@@ -18,6 +19,14 @@ public class PieceMovementController {
             case MO:     steps = 5;  break;
             default:     steps = 0;
         }
-        piece.move(steps);
+        
+        // 말 이동 + 잡기
+        List<Piece> captured = piece.move(steps);
+        
+        // 추가 턴 조건
+        boolean extraThrowFromResult = (result == YutThrowResult.YUT || result == YutThrowResult.MO);
+        boolean extraThrowFromCapture = !captured.isEmpty();
+        
+        return extraThrowFromResult || extraThrowFromCapture;
     }
 }
