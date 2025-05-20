@@ -29,6 +29,18 @@ public class GameModel {
 
         this.currentPlayerIndex = 0;
     }
+    
+    // 다음 턴으로 넘기기
+    public void nextTurn() {
+    	Player prev = getCurrentPlayer();
+    	// 플레이어 상태 초기화
+    	prev.clearYutHistory();
+    	prev.setCanAddResult(true);
+    	
+    	// 인덱스 순환
+    	int total = players.size();
+    	currentPlayerIndex = (currentPlayerIndex + 1) % total; 
+    }
 
     // ───── 게임 정보 접근자 ─────────────────────
     public Board getBoard() {
