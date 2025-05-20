@@ -3,7 +3,6 @@ package yutgame.view;
 import javax.swing.*;
 
 import yutgame.controller.GameController;
-import yutgame.controller.PieceMovementController;
 import yutgame.model.GameConfig;
 import yutgame.model.GameModel;
 import yutgame.model.Piece;
@@ -14,6 +13,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Base class for all board views (rectangle, pentagon, hexagon).
@@ -24,8 +24,10 @@ public abstract class AbstractBoardView extends JPanel {
     protected GameConfig config;
     protected GameModel model;
     protected GameController gameController;
+
     protected Piece selectedPiece = null;
     protected Map<String, JButton> resultButtons = new HashMap<>();
+    private Consumer<YutThrowResult> resultSelectionListener;
 
     protected JButton throwYutButton;
     protected JButton deployPieceButton;
@@ -71,7 +73,7 @@ public abstract class AbstractBoardView extends JPanel {
         throwYutButton = new JButton("윷 던지기");
         throwYutButton.setBounds(windowSizeX - 180, 50, 120, 40);
         add(throwYutButton);
-        
+
         addPlayerIcons();
 
         nextTurnButton = new JButton("턴 넘기기");
@@ -114,12 +116,18 @@ public abstract class AbstractBoardView extends JPanel {
                 selectedPiece = player.getPieces().get(pieceIndex);
                 System.out.printf("%d번째 플레이어의 %d번째 말 선택\n", playerIndex, pieceIndex);
                 showResultButtons(player.getYutHistory());
+                updatePieceIcons();
             });
             add(pieceBtn);
         }
     }
 
+    /** 윷 결과 버튼 클릭 리스너 등록 */
+    public void setResultSelectionListener(Consumer<YutThrowResult> listener) {
+        this.resultSelectionListener = listener;
+    }
 
+    /** 윷 결과 버튼 출력 */
     public void showResultButtons(List<YutThrowResult> results) {
         System.out.println(">> showResultButtons() 호출됨");
         System.out.println(">> 전달된 결과 수: " + results.size());
@@ -141,46 +149,8 @@ public abstract class AbstractBoardView extends JPanel {
             startX += 70;
 
             btn.addActionListener(e -> {
-                if (selectedPiece != null) {
-                    Piece moveTarget = selectedPiece.isLeader()
-                        ? selectedPiece
-                        : selectedPiece.getLeader();
-
-                    if (moveTarget == null) return;
-
-                    List<Piece> captured = new PieceMovementController().movePiece(moveTarget, result);
-                    gameController.resetCapturedPieces(captured);
-
-                    model.getCurrentPlayer().getYutHistory().remove(result);
-                    remove(btn);
-                    repaint();
-                    revalidate();
-
-                    updatePieceIcons();
-
-                    // 승리 판정
-                    boolean allFinished = model.getCurrentPlayer().getPieces().stream().allMatch(Piece::isFinished);
-                    if (allFinished) {
-                        JOptionPane.showMessageDialog(
-                            null,
-                            model.getCurrentPlayer().getName() + "님이 승리했습니다!",
-                            "Game Over",
-                            JOptionPane.INFORMATION_MESSAGE
-                        );
-                        return;
-                    }
-                    
-                    
-                    if (moveTarget.getPosition() != null) {
-                        int playerIndex = model.getCurrentPlayerIndex();
-                        int cellId = moveTarget.getPosition().getId();
-                        System.out.printf("▶ 플레이어 %d의 말 이동: 셀 ID %d\n", playerIndex, cellId);
-                    }
-
-                    if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
-                        gameController.nextTurn();
-                        selectedPiece = null;
-                    }
+                if (resultSelectionListener != null) {
+                    resultSelectionListener.accept(result);  // 컨트롤러에게 알림
                 }
             });
 
@@ -191,6 +161,27 @@ public abstract class AbstractBoardView extends JPanel {
         repaint();
     }
 
+    // 🟢 추가된 메서드들 (Controller가 호출)
+    public Piece getSelectedPiece() {
+        return selectedPiece;
+    }
+
+    public void clearSelectedPiece() {
+        selectedPiece = null;
+    }
+
+    public void updatePieceIcons() {
+        repaint(); // 기본 동작만 제공, 필요 시 override 가능
+    }
+
+    public void removeResultButton(YutThrowResult result) {
+        JButton btn = resultButtons.remove(result.name());
+        if (btn != null) {
+            remove(btn);
+            revalidate();
+            repaint();
+        }
+    }
 
     public JButton getThrowYutButton() {
         return throwYutButton;
@@ -210,10 +201,5 @@ public abstract class AbstractBoardView extends JPanel {
 
     public void setGameController(GameController controller) {
         this.gameController = controller;
-    }
-
-    /** 말 UI를 각 보드 타입에 맞게 업데이트 (오버라이드 필요) */
-    protected void updatePieceIcons() {
-        // 서브 클래스에서 구현
     }
 }

@@ -35,7 +35,7 @@ public class Piece {
         for (Piece p : passengers) {
             p.leader = null; // 승객의 리더 해제
         }
-        passengers.clear();
+        passengers.clear(); 
         leader = null;
         stackSize = 1; // 스택 초기화
         return grp;

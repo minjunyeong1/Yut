@@ -23,6 +23,7 @@ public class RectangleBoardView extends AbstractBoardView {
     private JLabel lineLabel;
     private Map<Integer, Point> cellIdToPosition = new HashMap<>();
     private List<JLabel> pieceIconLabels = new ArrayList<>();
+    private JButton highlightedCellButton = null;
 
     private final ImageIcon[] pieceIcons = {
         new ImageIcon(getClass().getResource("/yutgame/img/blue1.jpg")),
@@ -167,7 +168,7 @@ public class RectangleBoardView extends AbstractBoardView {
                 Point pos = cellIdToPosition.get(cellId);
                 if (pos == null) continue;
 
-                int stackSize = leader.getStackSize(); 
+                int stackSize = leader.getStackSize();
                 stackSize = Math.min(stackSize, 5);
 
                 String imagePath = String.format("/yutgame/img/big%s%d.jpg", color, stackSize);
@@ -175,6 +176,22 @@ public class RectangleBoardView extends AbstractBoardView {
 
                 JLabel iconLabel = new JLabel(icon);
                 iconLabel.setBounds(pos.x - 15, pos.y - 15, 30, 30);
+                
+                if (selectedPiece != null) {
+                    Piece selectedLeader = selectedPiece.isLeader() ? selectedPiece : selectedPiece.getLeader();
+                    Player currentPlayer = model.getCurrentPlayer();
+
+                    if (selectedLeader != null && selectedLeader.getPosition() != null &&
+                        currentPlayer.getPieces().contains(selectedLeader)) {
+
+                        int selectedId = selectedLeader.getPosition().getId();
+                        if (selectedId == cellId) {
+                            iconLabel.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 128), 3));
+                        }
+                    }
+                }
+
+                
                 add(iconLabel);
                 setComponentZOrder(iconLabel, 0);
                 pieceIconLabels.add(iconLabel);
@@ -187,8 +204,6 @@ public class RectangleBoardView extends AbstractBoardView {
         setComponentZOrder(lineLabel, getComponentCount() - 1);
         repaint();
     }
-
-
 
 
 }
