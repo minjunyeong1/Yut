@@ -50,9 +50,24 @@ public class GameController {
             Piece moveTarget = selected.isLeader() ? selected : selected.getLeader();
             if (moveTarget == null) return;
 
-            // 말 이동 및 말 잡기 처리
+            // 말 이동
             List<Piece> captured = new PieceMovementController().movePiece(moveTarget, result);
+            
+            // 추가 턴 판정
+            boolean tookPiece = !captured.isEmpty();
+            boolean yutMo = (result == YutThrowResult.YUT || result == YutThrowResult.MO);
+            boolean extraTurn = yutMo || tookPiece;
+            
+            if (extraTurn) {
+            		model.getCurrentPlayer().setCanAddResult(true);
+            }
+            else if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
+            	nextTurn();
+            }
+            
+            // 말 잡기 처리
             resetCapturedPieces(captured);
+            
 
             // 결과 제거 및 UI 갱신
             model.getCurrentPlayer().getYutHistory().remove(result);
@@ -71,7 +86,7 @@ public class GameController {
             }
 
             // 남은 윷 결과 없으면 턴 종료
-            if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
+            if (!extraTurn && model.getCurrentPlayer().getYutHistory().isEmpty()) {
                 nextTurn();
                 view.getBoardView().clearSelectedPiece();
             }
@@ -100,18 +115,12 @@ public class GameController {
 
     /** 현재 턴을 다음 플레이어로 변경 */
     public void nextTurn() {
-        Player previous = model.getCurrentPlayer();
-        previous.clearYutHistory();
-        previous.setCanAddResult(true);
+        model.nextTurn();
+        
         view.getYutResultView().clearResults();
-
-        int totalPlayers = model.getPlayers().size();
-        int next = (model.getCurrentPlayerIndex() + 1) % totalPlayers;
-        model.setCurrentPlayerIndex(next);
         updateTurnUI();
-        view.getBoardView().clearSelectedPiece();  // ✅ 선택 말 제거
-        view.getBoardView().updatePieceIcons();    // ✅ 테두리 제거 갱신
-
+        view.getBoardView().clearSelectedPiece();  // 선택 말 제거
+        view.getBoardView().updatePieceIcons();    // 테두리 제거 갱신
     }
 
     /** 턴 UI 업데이트 */
