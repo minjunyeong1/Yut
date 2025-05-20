@@ -18,7 +18,6 @@ public class RectangleBoard extends Board{
         linkOuterRing();
         linkDiagonals();
         this.startCell = cells.get(0);
-        System.out.println("startCell = " + (startCell == null ? "null" : startCell.getId()));
     }
 
     /* -------------------------------------------------------------------- */

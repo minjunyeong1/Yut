@@ -39,11 +39,7 @@ public class SettingController {
         }
 
         MainView view = new MainView(boardView);
-
-        // ✅ GameController 생성
         GameController gc = new GameController(model, view);
-
-        // ✅ AbstractBoardView에 controller 연결
         boardView.setGameController(gc);
 
         view.setVisible(true);

@@ -34,7 +34,6 @@ public class Cell {
 	    		Piece p = it.next();
 	    		if (p.getOwner() != newcomer.getOwner()) {
 	    			captured.addAll(p.detachGroup());
-	    			System.out.println("잡은 말 수: " + captured.size());
 	    			it.remove();
 	    		}
 	    	}

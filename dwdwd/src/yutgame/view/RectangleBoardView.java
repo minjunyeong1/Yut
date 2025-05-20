@@ -35,14 +35,6 @@ public class RectangleBoardView extends AbstractBoardView {
     public RectangleBoardView(GameConfig config, GameModel model, GameController controller) {
         super(config, model, controller);
         addCommonButtons();
-
-        for (int i = 0; i < pieceIcons.length; i++) {
-            if (pieceIcons[i].getImageLoadStatus() != MediaTracker.COMPLETE) {
-                System.out.println("❌ 이미지 로딩 실패: index " + i);
-            } else {
-                System.out.println("✔ 이미지 로딩 성공: index " + i);
-            }
-        }
     }
 
     @Override
@@ -195,9 +187,6 @@ public class RectangleBoardView extends AbstractBoardView {
                 add(iconLabel);
                 setComponentZOrder(iconLabel, 0);
                 pieceIconLabels.add(iconLabel);
-
-                System.out.printf("✅ 말 아이콘 표시 → player %d (%s), cell ID %d, 위치: (%d, %d), 스택: %d%n",
-                        playerIndex, color, cellId, pos.x, pos.y, stackSize);
             }
         }
 

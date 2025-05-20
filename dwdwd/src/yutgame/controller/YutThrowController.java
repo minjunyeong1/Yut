@@ -43,7 +43,6 @@ public class YutThrowController {
         // 윷 던지기 버튼: 랜덤 처리
         throwYutButton.addActionListener(e -> {
             YutThrowResult result = throwYut();
-            System.out.println("던진 결과: " + result);
             handleManualThrow(result);  // 공통 로직으로 정리
         });
 
@@ -57,7 +56,6 @@ public class YutThrowController {
             // 내부 이벤트 변수명은 evt 등으로 변경
             btn.addActionListener(evt -> {
                 YutThrowResult result = YutThrowResult.valueOf(resultKey);
-                System.out.println("수동 선택 결과: " + result);
                 handleManualThrow(result);
             });
         }
@@ -83,7 +81,6 @@ public class YutThrowController {
 
         // ➤ 윷/모가 아니라면 더 이상 추가 불가한지 확인
         if (!currentPlayer.canAddMoreResults()) {
-            System.out.println("❌ 현재 플레이어는 추가 던지기를 할 수 없습니다.");
             return;
         }
 
@@ -92,9 +89,6 @@ public class YutThrowController {
 
         // 결과 저장
         currentPlayer.addYutResult(result);
-
-        // 디버그 로그
-        System.out.println("▶ 현재 플레이어 윷 결과 저장됨: " + currentPlayer.getYutHistory());
     }
 
 }

@@ -13,7 +13,6 @@ public class HexagonBoard extends Board{
         linkOuterRing();
         linkDiagonals();
         this.startCell = cells.get(0);
-        System.out.println("startCell = " + (startCell == null ? "null" : startCell.getId()));
     }
 
     /* 전체 셀 읽기 전용 */
@@ -53,7 +52,7 @@ public class HexagonBoard extends Board{
         // 5 → 31 → 32 → 37 → 38 → 39 → 30
         link(5,  Cell.Path.DIAGONAL, 31);
         link(31, Cell.Path.OUTER,    32);
-        link(22, Cell.Path.OUTER,    37);
+        link(32, Cell.Path.OUTER,    37);
         link(37,  Cell.Path.DIAGONAL,38);
         link(38, Cell.Path.OUTER,    39);
         link(39, Cell.Path.OUTER,    30);

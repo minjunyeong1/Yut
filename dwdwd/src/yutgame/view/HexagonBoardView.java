@@ -81,6 +81,12 @@ public class HexagonBoardView extends AbstractBoardView {
             int y = (int) (cy - radius * Math.sin(angle)) + 10;
             cellIdToPosition.put(i * 5, new Point(x, y));
         }
+        
+        Point start = cellIdToPosition.get(0);
+        if (start != null) {
+            cellIdToPosition.put(30, new Point(start));
+        }
+
 
         // 외곽 간 셀들 (1~4, 6~9, ..., 21~24, 26~29)
         for (int i = 0; i < 6; i++) {
@@ -97,16 +103,22 @@ public class HexagonBoardView extends AbstractBoardView {
         // 중심 셀
         cellIdToPosition.put(37, new Point(cx, cy + 20));
 
-        // 대각선 셀 (41~52)
-        for (int i = 0; i < 6; i++) {
-            Point from = cellIdToPosition.get(i * 5);
-            for (int j = 1; j <= 2; j++) {
-                double ratio = j / 3.0;
-                int x = (int) (from.x * (1 - ratio) + cx * ratio);
-                int y = (int) (from.y * (1 - ratio) + (cy + 20) * ratio);
-                cellIdToPosition.put(39 + i * 2 + j, new Point(x, y));
-            }
-        }
+        int[] diagonalIds = {39, 38, 31, 32, 33, 34, 35,36, 43, 42, 41, 40};
+        	int idx = 0;
+
+        	for (int i = 0; i < 6; i++) {
+        	    Point from = cellIdToPosition.get(i * 5);
+        	    for (int j = 1; j <= 2; j++) {
+        	        if (idx >= diagonalIds.length) break;
+
+        	        double ratio = j / 3.0;
+        	        int x = (int) (from.x * (1 - ratio) + cx * ratio);
+        	        int y = (int) (from.y * (1 - ratio) + (cy + 20) * ratio);
+
+        	        int id = diagonalIds[idx++];
+        	        cellIdToPosition.put(id, new Point(x, y));
+        	    }
+        	}
     }
 
     @Override
@@ -139,12 +151,19 @@ public class HexagonBoardView extends AbstractBoardView {
 
                 JLabel iconLabel = new JLabel(icon);
                 iconLabel.setBounds(pos.x - 15, pos.y - 15, 30, 30);
+                
+                if (selectedPiece != null) {
+                    Piece selectedLeader = selectedPiece.isLeader() ? selectedPiece : selectedPiece.getLeader();
+                    if (selectedLeader != null &&
+                        selectedLeader.getPosition() != null &&
+                        selectedLeader.getPosition().getId() == cellId) {
+                        iconLabel.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 128), 3));
+                    }
+                }
+                
                 add(iconLabel);
                 setComponentZOrder(iconLabel, 0);
                 pieceIconLabels.add(iconLabel);
-
-                System.out.printf("\u2705 말 아이콘 표시 → player %d (%s), cell ID %d, 위치: (%d, %d), 스택: %d%n",
-                    playerIndex, color, cellId, pos.x, pos.y, stackSize);
             }
         }
 

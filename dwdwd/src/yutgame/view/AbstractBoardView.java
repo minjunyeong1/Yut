@@ -12,6 +12,7 @@ import yutgame.model.YutThrowResult;
 import java.awt.*;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -76,10 +77,6 @@ public abstract class AbstractBoardView extends JPanel {
 
         addPlayerIcons();
 
-        nextTurnButton = new JButton("턴 넘기기");
-        nextTurnButton.setBounds(windowSizeX - 180, 170, 120, 40);
-        add(nextTurnButton);
-
         String[] labels = {"빽도", "도", "개", "걸", "윷", "모"};
         YutThrowResult[] results = {
             YutThrowResult.BACKDO, YutThrowResult.DO, YutThrowResult.GAE,
@@ -114,7 +111,11 @@ public abstract class AbstractBoardView extends JPanel {
                 int playerIndex = model.getCurrentPlayerIndex();
                 Player player = model.getPlayers().get(playerIndex);
                 selectedPiece = player.getPieces().get(pieceIndex);
-                System.out.printf("%d번째 플레이어의 %d번째 말 선택\n", playerIndex, pieceIndex);
+                if (selectedPiece.isFinished()) {
+                    selectedPiece = null;
+                    updatePieceIcons();
+                    return;
+                }
                 showResultButtons(player.getYutHistory());
                 updatePieceIcons();
             });
@@ -129,20 +130,18 @@ public abstract class AbstractBoardView extends JPanel {
 
     /** 윷 결과 버튼 출력 */
     public void showResultButtons(List<YutThrowResult> results) {
-        System.out.println(">> showResultButtons() 호출됨");
-        System.out.println(">> 전달된 결과 수: " + results.size());
-        System.out.println(">> 결과 리스트: " + results);
-
         int startX = windowSizeX / 2 - (results.size() * 60) / 2;
         int y = 500;
 
+        // 기존 버튼 제거
         for (JButton btn : resultButtons.values()) {
             remove(btn);
         }
         resultButtons.clear();
 
-        for (YutThrowResult result : results) {
-            System.out.println("→ 버튼 생성: " + result.toString());
+        for (int i = 0; i < results.size(); i++) {
+            YutThrowResult result = results.get(i);  // 고유 참조
+            String key = result.name() + "_" + i;    // 고유 키: 예) "MO_0", "MO_1"
 
             JButton btn = new JButton(result.toString());
             btn.setBounds(startX, y, 60, 35);
@@ -150,18 +149,18 @@ public abstract class AbstractBoardView extends JPanel {
 
             btn.addActionListener(e -> {
                 if (resultSelectionListener != null) {
-                    resultSelectionListener.accept(result);  // 컨트롤러에게 알림
+                    resultSelectionListener.accept(result);
                 }
             });
 
             add(btn);
-            resultButtons.put(result.name(), btn);
+            resultButtons.put(key, btn);
         }
 
         repaint();
     }
 
-    // 🟢 추가된 메서드들 (Controller가 호출)
+
     public Piece getSelectedPiece() {
         return selectedPiece;
     }
@@ -171,17 +170,23 @@ public abstract class AbstractBoardView extends JPanel {
     }
 
     public void updatePieceIcons() {
-        repaint(); // 기본 동작만 제공, 필요 시 override 가능
+        repaint();
     }
 
     public void removeResultButton(YutThrowResult result) {
-        JButton btn = resultButtons.remove(result.name());
-        if (btn != null) {
-            remove(btn);
-            revalidate();
-            repaint();
+        Iterator<Map.Entry<String, JButton>> it = resultButtons.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, JButton> entry = it.next();
+            if (entry.getValue().getText().equals(result.toString())) {
+                remove(entry.getValue());
+                it.remove();
+                revalidate();
+                repaint();
+                break; 
+            }
         }
     }
+
 
     public JButton getThrowYutButton() {
         return throwYutButton;
@@ -191,9 +196,6 @@ public abstract class AbstractBoardView extends JPanel {
         return deployPieceButton;
     }
 
-    public JButton getNextTurnButton() {
-        return nextTurnButton;
-    }
 
     public Map<String, JButton> getYutChoiceButtons() {
         return yutChoiceButtons;

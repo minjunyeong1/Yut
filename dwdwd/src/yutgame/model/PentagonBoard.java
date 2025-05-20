@@ -13,7 +13,6 @@ public class PentagonBoard extends Board{
         linkOuterRing();
         linkDiagonals();
         this.startCell = cells.get(0);
-        System.out.println("startCell = " + (startCell == null ? "null" : startCell.getId()));
     }
 
     /* 외부 조회 */

@@ -26,12 +26,6 @@ public class GameController {
     private void setupEventHandlers() {
         AbstractBoardView boardView = view.getBoardView();
 
-        // 턴 넘기기 버튼
-        JButton nextTurnButton = boardView.getNextTurnButton();
-        if (nextTurnButton != null) {
-            nextTurnButton.addActionListener(e -> nextTurn());
-        }
-
         new YutThrowController(
             boardView.getThrowYutButton(),
             view.getYutResultView(),
@@ -86,14 +80,8 @@ public class GameController {
             for (Piece grouped : capturedPiece.detachGroup()) {
                 grouped.setLeader(null);
                 grouped.getPassengers().clear();
-
-                System.out.println(">> 말 복귀 전: 위치 = " + grouped.getPosition());
-
                 grouped.setPosition(startCell);
                 startCell.enter(grouped, false, false);
-
-                System.out.println("복귀 대상 말: " + grouped);
-                System.out.println("말의 현재 위치 ID: " + grouped.getPosition().getId());
             }
         }
     }
@@ -109,8 +97,8 @@ public class GameController {
         int next = (model.getCurrentPlayerIndex() + 1) % totalPlayers;
         model.setCurrentPlayerIndex(next);
         updateTurnUI();
-        view.getBoardView().clearSelectedPiece();  // ✅ 선택 말 제거
-        view.getBoardView().updatePieceIcons();    // ✅ 테두리 제거 갱신
+        view.getBoardView().clearSelectedPiece();  
+        view.getBoardView().updatePieceIcons();    
 
     }
 

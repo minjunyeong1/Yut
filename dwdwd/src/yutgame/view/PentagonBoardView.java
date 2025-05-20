@@ -27,14 +27,8 @@ public class PentagonBoardView extends AbstractBoardView {
     public PentagonBoardView(GameConfig config, GameModel model, GameController controller) {
         super(config, model, controller);
         addCommonButtons();
-        for (int i = 0; i < pieceIcons.length; i++) {
-            if (pieceIcons[i].getImageLoadStatus() != MediaTracker.COMPLETE) {
-                System.out.println("❌ 이미지 로딩 실패: index " + i);
-            } else {
-                System.out.println("✔ 이미지 로딩 성공: index " + i);
-            }
         }
-    }
+
 
     @Override
     protected void buildBoard() {
@@ -78,6 +72,11 @@ public class PentagonBoardView extends AbstractBoardView {
                 cellIdToPosition.put(cellId++, new Point(x, y));
             }
         }
+        
+        Point startPos = cellIdToPosition.get(0);
+        if (startPos != null) {
+            cellIdToPosition.put(25, new Point(startPos));
+        }
 
         // 중앙 셀 (32)
         JButton centerBtn = new JButton(bigCircleIcon);
@@ -87,16 +86,19 @@ public class PentagonBoardView extends AbstractBoardView {
         centerBtn.setFocusPainted(false);
         centerBtn.setOpaque(false);
         add(centerBtn);
-        cellIdToPosition.put(32, new Point(cx, cy + 20));
+        cellIdToPosition.put(32, new Point(cx, cy+ 20));
 
-        // 대각선 셀 26~36
-        int diagId = 26;
+        int[] diagIds = {34, 33, 26, 27, 28, 29, 30, 31, 36, 35};  // 원하는 순서대로
+        int diagIndex = 0;
         for (int i = 0; i < 5; i++) {
             Point from = outerVertices.get(i);
             for (int j = 1; j <= 2; j++) {
+                int id = diagIds[diagIndex++]; 
+
                 double r = j / 3.0;
                 int x = (int)(from.x * (1 - r) + cx * r);
-                int y = (int)(from.y * (1 - r) + (cy + 20) * r);
+                int y = (int)(from.y * (1 - r) + cy * r);
+
                 JButton btn = new JButton(circleIcon);
                 btn.setBounds(x - bs / 2, y - bs / 2, bs, bs);
                 btn.setContentAreaFilled(false);
@@ -104,7 +106,7 @@ public class PentagonBoardView extends AbstractBoardView {
                 btn.setFocusPainted(false);
                 btn.setOpaque(false);
                 add(btn);
-                cellIdToPosition.put(diagId++, new Point(x, y));
+                cellIdToPosition.put(id, new Point(x, y));
             }
         }
 
@@ -148,12 +150,19 @@ public class PentagonBoardView extends AbstractBoardView {
 
                 JLabel iconLabel = new JLabel(icon);
                 iconLabel.setBounds(pos.x - 15, pos.y - 15, 30, 30);
+
+                if (selectedPiece != null) {
+                    Piece selectedLeader = selectedPiece.isLeader() ? selectedPiece : selectedPiece.getLeader();
+                    if (selectedLeader != null &&
+                        selectedLeader.getPosition() != null &&
+                        selectedLeader.getPosition().getId() == cellId) {
+                        iconLabel.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 128), 3));
+                    }
+                }
+
                 add(iconLabel);
                 setComponentZOrder(iconLabel, 0);
                 pieceIconLabels.add(iconLabel);
-
-                System.out.printf("✅ 말 아이콘 표시 → player %d (%s), cell ID %d, 위치: (%d, %d), 스택: %d%n",
-                    playerIndex, color, cellId, pos.x, pos.y, stackSize);
             }
         }
 
