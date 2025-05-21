@@ -84,4 +84,8 @@ public class RectangleBoard extends Board{
     public Cell getStartCell() {
     	return cells.get(0);
     }
+    
+    public Cell getLastCell() {
+        return cells.get(20); 
+    }
 }

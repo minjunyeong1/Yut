@@ -8,6 +8,7 @@ import java.util.*;
 public class Piece {
     private Player owner;
     private Cell position; // 현재 칸 (null == 도착 후 제거)
+    private Cell.Path lastPath = Cell.Path.OUTER; // 마지막으로 진행한 경로
     private Piece leader;
     private final List<Piece> passengers = new ArrayList<>();
     private int stackSize = 1;
@@ -46,15 +47,40 @@ public class Piece {
         if (!isLeader()) return List.of(); // 승객이면 이동 금지
 
         List<Piece> captured = new ArrayList<>();
-        int absSteps = Math.abs(steps);
         int dir = (steps >= 0) ? 1 : -1;
+        int absSteps = Math.abs(steps);
 
         List<Piece> group = new ArrayList<>();
         group.add(this);
         group.addAll(passengers);  // ✅ passengers 유지한 채 이동
 
         for (int i = 0; i < absSteps && position != null; i++) {
-            Cell next = (dir > 0) ? nextForwardCell(i == 0) : position.next(Cell.Path.OUTER);
+            Cell from = position;
+            Cell next;
+
+            if (dir > 0) {
+                next = nextForwardCell(i == 0);
+
+                // 경로 기록: 대각선 진입 시 기록해 둠
+                lastPath = (from.next(Cell.Path.DIAGONAL) == next)
+                    ? Cell.Path.DIAGONAL
+                    : Cell.Path.OUTER;
+
+            } else {
+                // 역방향 이동 시: lastPath 기준 prev 시도
+                Cell prev = position.prev(lastPath);
+
+                // fallback: DIAGONAL → OUTER 순으로 시도
+                if (prev == null) {
+                    prev = position.prev(Cell.Path.DIAGONAL);
+                    if (prev != null) lastPath = Cell.Path.DIAGONAL;
+                    else {
+                        prev = position.prev(Cell.Path.OUTER);
+                        if (prev != null) lastPath = Cell.Path.OUTER;
+                    }
+                }
+                next = prev;
+            }
 
             if (next == null) {
                 for (Piece p : group) position.leave(p);
@@ -64,7 +90,6 @@ public class Piece {
 
             for (Piece p : group) position.leave(p);
             position = next;
-
             for (Piece p : group) p.setPosition(position);
 
             boolean last = (i == absSteps - 1);

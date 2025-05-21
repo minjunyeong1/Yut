@@ -69,4 +69,8 @@ public class GameModel {
                 .filter(p -> p.getPieces().stream().allMatch(Piece::isFinished))
                 .findFirst();
     }
+    
+    public Cell getLastCell() {
+        return board.getLastCell();
+    }
 }

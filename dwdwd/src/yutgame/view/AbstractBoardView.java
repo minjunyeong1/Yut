@@ -11,6 +11,7 @@ import yutgame.model.YutThrowResult;
 
 import java.awt.*;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -108,17 +109,27 @@ public abstract class AbstractBoardView extends JPanel {
             pieceBtn.setBounds(windowSizeX / 2 - 200 + i * 90, pieceButtonStartY, 80, pieceButtonHeight);
             int pieceIndex = i;
             pieceBtn.addActionListener(e -> {
-                int playerIndex = model.getCurrentPlayerIndex();
-                Player player = model.getPlayers().get(playerIndex);
-                selectedPiece = player.getPieces().get(pieceIndex);
+                Player p = model.getPlayers().get(model.getCurrentPlayerIndex());
+                selectedPiece = p.getPieces().get(pieceIndex);
+
                 if (selectedPiece.isFinished()) {
                     selectedPiece = null;
                     updatePieceIcons();
                     return;
                 }
-                showResultButtons(player.getYutHistory());
+
+                // 출발 전 상태일 경우 빽도 제외
+                List<YutThrowResult> filteredResults = new ArrayList<>(p.getYutHistory());
+
+                if (selectedPiece.getPosition() != null &&
+                    selectedPiece.getPosition().getId() == 0) {
+                    filteredResults.removeIf(r -> r.getValue() == -1); // 빽도 제거
+                }
+
+                showResultButtons(filteredResults); // 필터링된 결과만 보여줌
                 updatePieceIcons();
             });
+
             add(pieceBtn);
         }
     }

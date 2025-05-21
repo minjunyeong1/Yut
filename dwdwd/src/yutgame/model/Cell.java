@@ -7,6 +7,7 @@ public class Cell {
 
     private final int id;                        // 0 = 출발, 20 = 도착 …
     private final Map<Path, Cell> next = new EnumMap<>(Path.class);
+    private final Map<Path, Cell> prev = new EnumMap<>(Path.class);
     private final List<Piece> horses = new ArrayList<>();
     private final boolean branchEntrance;
 
@@ -16,8 +17,12 @@ public class Cell {
     	}
 
     /* ------------ 링크/조회 ------------ */
-    public void setNext(Path p, Cell target) { next.put(p, target); }
+    public void setNext(Path p, Cell target) {
+    	next.put(p, target);
+    	target.prev.put(p, this);
+    }
     public Cell next(Path p) { return next.get(p); }
+    public Cell prev(Path p) { return prev.get(p); }
     public int getId() { return id; }
     public boolean isBranchEntrance() { return branchEntrance; }
 
@@ -55,4 +60,5 @@ public class Cell {
     	horses.add(newcomer);
     	return captured;
     }
+    
 }

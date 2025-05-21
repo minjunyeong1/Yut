@@ -76,4 +76,7 @@ public class PentagonBoard extends Board{
     private void link(int fromId, Cell.Path via, int toId) {
         cells.get(fromId).setNext(via, cells.get(toId));
     }
+    public Cell getLastCell() {
+        return cells.get(30); 
+    }
 }
