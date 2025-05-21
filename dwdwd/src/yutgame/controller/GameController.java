@@ -46,18 +46,6 @@ public class GameController {
 
             int steps = result.getValue();
 
-         // 1. 빽도인데 모든 말이 0번 셀에 있으면 → 턴 넘김
-            if (steps == -1 && moveTarget.getPosition().getId() == 0) {
-                boolean allAtStartCell = model.getCurrentPlayer().getPieces().stream()
-                    .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
-
-                if (allAtStartCell) {
-                    model.getCurrentPlayer().getYutHistory().remove(result);
-                    nextTurn();
-                    return;
-                }
-            }
-
             // 2. 시작 셀(1번)에서 빽도일 경우 → 마지막 셀로 이동
             if (steps == -1 && moveTarget.getPosition() != null && moveTarget.getPosition().getId() == 1) {
                 Cell last = model.getBoard().getLastCell();  // Board 구현체에 getLastCell() 필요

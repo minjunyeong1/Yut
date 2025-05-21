@@ -9,27 +9,30 @@ public class YutResultView extends JPanel {
 
     public YutResultView() {
         setLayout(new BorderLayout());
+        setBackground(new Color(245, 245, 245));
+        setBorder(BorderFactory.createTitledBorder("🎲 게임 결과")); // 테두리 + 제목
 
-        setBackground(new Color(240, 240, 240)); 
-        setOpaque(true);
-
-        resultArea = new JTextArea("결과:\n");
-        resultArea.setFont(new Font("SansSerif", Font.BOLD, 18));
+        resultArea = new JTextArea();
+        resultArea.setFont(new Font("SansSerif", Font.PLAIN, 16));
         resultArea.setEditable(false);
         resultArea.setLineWrap(true);
         resultArea.setWrapStyleWord(true);
+        resultArea.setMargin(new Insets(10, 10, 10, 10));
 
-        add(resultArea, BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(resultArea);
+        scroll.setBorder(null);
+
+        add(scroll, BorderLayout.CENTER);
         history = new StringBuilder();
     }
 
     public void setResult(String resultText) {
         history.append(resultText).append("\n");
-        resultArea.setText("결과:\n" + history);
+        resultArea.setText(history.toString());
     }
 
     public void clearResults() {
         history.setLength(0);
-        resultArea.setText("결과:\n");
+        resultArea.setText("");
     }
 }

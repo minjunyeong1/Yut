@@ -89,6 +89,22 @@ public class YutThrowController {
 
         // 결과 저장
         currentPlayer.addYutResult(result);
+
+        boolean hasOnlyBackdo = currentPlayer.getYutHistory().size() == 1 &&
+            currentPlayer.getYutHistory().get(0).getValue() == -1;
+
+        boolean allAtStartCell = currentPlayer.getPieces().stream()
+            .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
+
+        if (hasOnlyBackdo && allAtStartCell) {
+            currentPlayer.getYutHistory().clear();
+            boardView.clearSelectedPiece();
+            boardView.updatePieceIcons();
+            resultView.clearResults();
+            gameController.nextTurn();
+            return;
+        }
     }
+
 
 }
