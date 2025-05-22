@@ -109,11 +109,11 @@ public class GameController {
                 );
                 
                 if (choice == JOptionPane.YES_OPTION) {
-                	// 기존 창 닫기
-                	SwingUtilities.getWindowAncestor(view).dispose();
-                	
-                	// 게임 다시 시작하기
-                	new SettingController();
+                	// 기존 게임 창 닫기
+                    view.dispose();  // MainView가 JFrame이므로 직접 닫기 가능
+
+                    // 설정창 다시 띄우기
+                    SwingUtilities.invokeLater(() -> new SettingController());
                 }
                 else {
                 	System.exit(0);
