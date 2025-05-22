@@ -1,11 +1,11 @@
 package controller;
 
-import model.Cell;
-import model.GameModel;
-import model.Piece;
-import model.Player;
-import model.YutThrowResult;
-import view.*;
+import package.model.Cell;
+import package.model.GameModel;
+import package.model.Piece;
+import package.model.Player;
+import package.model.YutThrowResult;
+import package.view.*;
 
 import javax.swing.*;
 import java.util.List;
