@@ -1,11 +1,11 @@
-package controller;
+package yutgame.controller;
 
-import package.model.Cell;
-import package.model.GameModel;
-import package.model.Piece;
-import package.model.Player;
-import package.model.YutThrowResult;
-import package.view.*;
+import yutgame.model.Cell;
+import yutgame.model.GameModel;
+import yutgame.model.Piece;
+import yutgame.model.Player;
+import yutgame.model.YutThrowResult;
+import yutgame.view.*;
 
 import javax.swing.*;
 import java.util.List;
@@ -75,8 +75,22 @@ public class GameController {
                 return;
             }
 
-            // 기본 말 이동 및 잡기 처리
+            // 기본 말 이동
             List<Piece> captured = new PieceMovementController().movePiece(moveTarget, result);
+            
+            // 추가 턴 판정
+            boolean tookPiece = !captured.isEmpty();
+            boolean yutMo = (result == YutThrowResult.YUT || result == YutThrowResult.MO);
+            boolean extraTurn = yutMo || tookPiece;
+            
+            if (extraTurn) {
+            		model.getCurrentPlayer().setCanAddResult(true);
+            }
+            else if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
+            	nextTurn();
+            }
+            
+            // 말 잡기
             resetCapturedPieces(captured);
 
             // 결과 제거 및 UI 갱신
@@ -108,7 +122,7 @@ public class GameController {
             }
 
             // 남은 윷 결과 없으면 턴 종료
-            if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
+            if (!extraTurn && model.getCurrentPlayer().getYutHistory().isEmpty()) {
                 nextTurn();
                 view.getBoardView().clearSelectedPiece();
             }
