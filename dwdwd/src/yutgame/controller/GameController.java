@@ -46,7 +46,7 @@ public class GameController {
 
             int steps = result.getValue();
 
-         // 1. 빽도인데 모든 말이 0번 셀에 있으면 → 턴 넘김
+            // 1. 빽도인데 모든 말이 0번 셀에 있으면 → 턴 넘김
             if (steps == -1 && moveTarget.getPosition().getId() == 0) {
                 boolean allAtStartCell = model.getCurrentPlayer().getPieces().stream()
                     .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
@@ -77,19 +77,18 @@ public class GameController {
 
             // 기본 말 이동
             List<Piece> captured = new PieceMovementController().movePiece(moveTarget, result);
-            
+
             // 추가 턴 판정
             boolean tookPiece = !captured.isEmpty();
             boolean yutMo = (result == YutThrowResult.YUT || result == YutThrowResult.MO);
             boolean extraTurn = yutMo || tookPiece;
-            
+
             if (extraTurn) {
-            		model.getCurrentPlayer().setCanAddResult(true);
+                model.getCurrentPlayer().setCanAddResult(true);
+            } else if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
+                nextTurn();
             }
-            else if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
-            	nextTurn();
-            }
-            
+
             // 말 잡기
             resetCapturedPieces(captured);
 
@@ -107,16 +106,12 @@ public class GameController {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.INFORMATION_MESSAGE
                 );
-                
+
                 if (choice == JOptionPane.YES_OPTION) {
-                	// 기존 창 닫기
-                	SwingUtilities.getWindowAncestor(view).dispose();
-                	
-                	// 게임 다시 시작하기
-                	new SettingController();
-                }
-                else {
-                	System.exit(0);
+                    view.dispose();  // 창 닫기
+                    SwingUtilities.invokeLater(() -> new SettingController());  // UI 다시 시작
+                } else {
+                    System.exit(0);
                 }
                 return;
             }
@@ -156,7 +151,6 @@ public class GameController {
         updateTurnUI();
         view.getBoardView().clearSelectedPiece();  
         view.getBoardView().updatePieceIcons();    
-
     }
 
     /** 턴 UI 업데이트 */
