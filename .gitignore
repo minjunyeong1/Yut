@@ -1,0 +1,11 @@
+# 컴파일 클래스파일과 출력 폴더
+out/
+*.class
+
+# IDE 설정
+.vscode/
+*.iml
+.idea/
+
+# macOS 메타데이터
+.DS_Store
