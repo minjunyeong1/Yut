@@ -25,26 +25,27 @@ public class MainView {
             root.getChildren().add(boardView);
         }
 
-        // ── 오른쪽: 턴 정보 + 결과 ───────────────
+        // ── 보드 위: 턴 표시(화살표) ─────────────
+        if (turnView != null && boardView != null) {
+            // add inside boardView so 좌표계가 동일합니다
+            boardView.getChildren().add(turnView);
+
+            // AbstractBoardView.addPlayerIcons() 와 동일한 startX
+            double iconStartX = 500;
+            turnView.setLayoutX(iconStartX);
+            turnView.setLayoutY(10);
+        }
+
+        // ── 오른쪽: 결과 영역 ────────────────────
         Pane rightPanel = new Pane();
-        rightPanel.setLayoutX(810);
+        rightPanel.setLayoutX(970);
         rightPanel.setLayoutY(10);
         rightPanel.setPrefSize(260, 700);
-
-        if (turnView != null) {
-            turnView.setLayoutX(0);
-            turnView.setLayoutY(10);
-            turnView.setPrefSize(235, 80);
-            rightPanel.getChildren().add(turnView);
-        }
-
         if (yutResultView != null) {
             yutResultView.setLayoutX(0);
-            yutResultView.setLayoutY(140);
-            yutResultView.setPrefSize(260, 300);
+            yutResultView.setLayoutY(0);
             rightPanel.getChildren().add(yutResultView);
         }
-
         root.getChildren().add(rightPanel);
 
         Scene scene = new Scene(root);

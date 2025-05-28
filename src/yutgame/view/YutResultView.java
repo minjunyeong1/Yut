@@ -4,7 +4,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
@@ -19,17 +18,21 @@ public class YutResultView extends VBox {
         setPadding(new Insets(10));
 
         // 배경색 설정
-        setBackground(new Background(new BackgroundFill(Color.rgb(240, 240, 240), CornerRadii.EMPTY, Insets.EMPTY)));
+        setBackground(new Background(
+            new BackgroundFill(Color.rgb(240,240,240),
+            CornerRadii.EMPTY, Insets.EMPTY)));
 
-        // 텍스트 영역 초기화
+        // 결과 텍스트 영역
         resultArea = new TextArea("결과:\n");
-        resultArea.setStyle("-fx-font-family: 'SansSerif'; -fx-font-weight: bold; -fx-font-size: 18px;");
+        resultArea.setStyle(
+            "-fx-font-family: 'SansSerif';" +
+            "-fx-font-weight: bold;" +
+            "-fx-font-size: 18px;");
         resultArea.setEditable(false);
         resultArea.setWrapText(true);
         resultArea.setPrefHeight(280);
 
         getChildren().add(resultArea);
-
         history = new StringBuilder();
     }
 
