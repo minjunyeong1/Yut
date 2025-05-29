@@ -1,5 +1,8 @@
 package yutgame.view;
 
+import yutgame.model.GameModel;
+import yutgame.controller.SettingController;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,10 +10,12 @@ public class MainView extends JFrame {
     private TurnView turnView;
     private AbstractBoardView boardView;
     private YutResultView yutResultView;
+    private GameModel model;
 
-    public MainView(AbstractBoardView boardView) {
+    public MainView(GameModel model, AbstractBoardView boardView) {
         super("Yut Play");
         this.boardView = boardView;
+        this.model = model;
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);               // 절대좌표
@@ -52,5 +57,26 @@ public class MainView extends JFrame {
 
     public YutResultView getYutResultView() {
         return yutResultView;
+    }
+    
+    public void handleWinCondition() { // Controller에서 호출
+        int choice = JOptionPane.showConfirmDialog(
+                this,
+                model.getCurrentPlayer().getName() + "님이 승리했습니다!\n 다시 시작하시겠습니까?",
+                "Game Over",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        if (choice == JOptionPane.YES_OPTION) {
+            this.dispose();
+            SwingUtilities.invokeLater(() -> new SettingController());
+        } else {
+            System.exit(0);
+        }
+    }
+    
+    public GameModel getModel() {
+        return model;
     }
 }

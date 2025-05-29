@@ -100,24 +100,7 @@ public class GameController {
 
             // 승리 판정
             if (model.isCurrentPlayerWinner()) {
-                int choice = JOptionPane.showConfirmDialog(
-                    view,
-                    model.getCurrentPlayer().getName() + "님이 승리했습니다!\n 다시 시작하시겠습니까?",
-                    "Game Over",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE
-                );
-
-                if (choice == JOptionPane.YES_OPTION) {
-                	// 기존 게임 창 닫기
-                    view.dispose();  // MainView가 JFrame이므로 직접 닫기 가능
-
-                    // 설정창 다시 띄우기
-                    SwingUtilities.invokeLater(() -> new SettingController());
-                }
-                else {
-                	System.exit(0);
-                }
+                view.handleWinCondition();
                 return;
             }
 

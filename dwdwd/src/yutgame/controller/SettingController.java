@@ -29,7 +29,7 @@ public class SettingController {
 
         switch(shape) {
             case PENTAGON:
-                boardView = new PentagonBoardView(config, model, null);  
+                boardView = new PentagonBoardView(config, model, null);
                 break;
             case HEXAGON:
                 boardView = new HexagonBoardView(config, model, null);
@@ -38,7 +38,7 @@ public class SettingController {
                 boardView = new RectangleBoardView(config, model, null);
         }
 
-        MainView view = new MainView(boardView);
+        MainView view = new MainView(model, boardView); // GameModel 전달
         GameController gc = new GameController(model, view);
         boardView.setGameController(gc);
 
