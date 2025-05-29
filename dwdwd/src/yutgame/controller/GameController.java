@@ -46,7 +46,7 @@ public class GameController {
 
             int steps = result.getValue();
 
-            // 1. 빽도인데 모든 말이 0번 셀에 있으면 → 턴 넘김
+         // 1. 빽도인데 모든 말이 0번 셀에 있으면 → 턴 넘김
             if (steps == -1 && moveTarget.getPosition().getId() == 0) {
                 boolean allAtStartCell = model.getCurrentPlayer().getPieces().stream()
                     .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
@@ -84,9 +84,10 @@ public class GameController {
             boolean extraTurn = yutMo || tookPiece;
 
             if (extraTurn) {
-                model.getCurrentPlayer().setCanAddResult(true);
-            } else if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
-                nextTurn();
+            		model.getCurrentPlayer().setCanAddResult(true);
+            }
+            else if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
+            	nextTurn();
             }
 
             // 말 잡기
@@ -108,10 +109,14 @@ public class GameController {
                 );
 
                 if (choice == JOptionPane.YES_OPTION) {
-                    view.dispose();  // 창 닫기
-                    SwingUtilities.invokeLater(() -> new SettingController());  // UI 다시 시작
-                } else {
-                    System.exit(0);
+                	// 기존 게임 창 닫기
+                    view.dispose();  // MainView가 JFrame이므로 직접 닫기 가능
+
+                    // 설정창 다시 띄우기
+                    SwingUtilities.invokeLater(() -> new SettingController());
+                }
+                else {
+                	System.exit(0);
                 }
                 return;
             }
@@ -151,6 +156,7 @@ public class GameController {
         updateTurnUI();
         view.getBoardView().clearSelectedPiece();  
         view.getBoardView().updatePieceIcons();    
+
     }
 
     /** 턴 UI 업데이트 */
