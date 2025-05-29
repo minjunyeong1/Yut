@@ -13,8 +13,9 @@ public class MainView {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Yut Play");
 
+        // 루트 크기를 씬 크기와 동일하게 명시
         Pane root = new Pane();
-        root.setPrefSize(1100, 750);
+        root.setPrefSize(1200, 750);
 
         // ── 보드 영역 ───────────────────────────
         if (boardView != null) {
@@ -27,10 +28,7 @@ public class MainView {
 
         // ── 보드 위: 턴 표시(화살표) ─────────────
         if (turnView != null && boardView != null) {
-            // add inside boardView so 좌표계가 동일합니다
             boardView.getChildren().add(turnView);
-
-            // AbstractBoardView.addPlayerIcons() 와 동일한 startX
             double iconStartX = 500;
             turnView.setLayoutX(iconStartX);
             turnView.setLayoutY(10);
@@ -38,7 +36,8 @@ public class MainView {
 
         // ── 오른쪽: 결과 영역 ────────────────────
         Pane rightPanel = new Pane();
-        rightPanel.setLayoutX(970);
+        // 1200px 넓이에 맞춰, 260px 폭의 패널이 잘리지 않도록 X를 930으로 설정
+        rightPanel.setLayoutX(930);
         rightPanel.setLayoutY(10);
         rightPanel.setPrefSize(260, 700);
         if (yutResultView != null) {
@@ -48,7 +47,8 @@ public class MainView {
         }
         root.getChildren().add(rightPanel);
 
-        Scene scene = new Scene(root);
+        // 씬에 폭·높이를 명시적으로 지정
+        Scene scene = new Scene(root, 1200, 750);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();

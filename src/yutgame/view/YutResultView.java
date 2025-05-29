@@ -23,7 +23,7 @@ public class YutResultView extends VBox {
             CornerRadii.EMPTY, Insets.EMPTY)));
 
         // 결과 텍스트 영역
-        resultArea = new TextArea("결과:\n");
+        resultArea = new TextArea("🎲 윷 결과:\n");
         resultArea.setStyle(
             "-fx-font-family: 'SansSerif';" +
             "-fx-font-weight: bold;" +
@@ -38,11 +38,11 @@ public class YutResultView extends VBox {
 
     public void setResult(String resultText) {
         history.append(resultText).append("\n");
-        resultArea.setText("결과:\n" + history);
+        resultArea.setText("🎲 결과:\n" + history);
     }
 
     public void clearResults() {
         history.setLength(0);
-        resultArea.setText("결과:\n");
+        resultArea.setText("🎲 결과:\n");
     }
 }

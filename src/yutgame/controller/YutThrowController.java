@@ -75,15 +75,33 @@ public class YutThrowController {
         };
     }
 
-    /** 수동 윷 결과 처리 */
     public void handleManualThrow(YutThrowResult result) {
         Player currentPlayer = model.getCurrentPlayer();
 
+        // ➤ 윷/모가 아니라면 더 이상 추가 불가한지 확인
         if (!currentPlayer.canAddMoreResults()) {
-            return; // 윷·모가 아니면 추가 불가
+            return;
         }
 
+        // 결과 UI에 출력
         resultView.setResult(result.toString());
+
+        // 결과 저장
         currentPlayer.addYutResult(result);
+
+        boolean hasOnlyBackdo = currentPlayer.getYutHistory().size() == 1 &&
+            currentPlayer.getYutHistory().get(0).getValue() == -1;
+
+        boolean allAtStartCell = currentPlayer.getPieces().stream()
+            .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
+
+        if (hasOnlyBackdo && allAtStartCell) {
+            currentPlayer.getYutHistory().clear();
+            boardView.clearSelectedPiece();
+            boardView.updatePieceIcons();
+            resultView.clearResults();
+            gameController.nextTurn();
+            return;
+        }
     }
 }
