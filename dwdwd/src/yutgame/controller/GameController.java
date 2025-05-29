@@ -43,6 +43,9 @@ public class GameController {
 
             Piece moveTarget = selected.isLeader() ? selected : selected.getLeader();
             if (moveTarget == null) return;
+            
+            // 말이 도착했으면 더 이상 이동 불가
+            if (moveTarget.isFinished()) return;
 
             int steps = result.getValue();
 
