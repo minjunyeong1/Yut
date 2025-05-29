@@ -80,8 +80,8 @@ public class GameController {
 
             // 추가 턴 판정
             boolean tookPiece = !captured.isEmpty();
-            boolean yutMo = (result == YutThrowResult.YUT || result == YutThrowResult.MO);
-            boolean extraTurn = yutMo || tookPiece;
+            // boolean yutMo = (result == YutThrowResult.YUT || result == YutThrowResult.MO);
+            boolean extraTurn = /* yutMo || */ tookPiece;
 
             if (extraTurn) {
             		model.getCurrentPlayer().setCanAddResult(true);
