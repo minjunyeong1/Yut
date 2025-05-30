@@ -7,7 +7,6 @@ import yutgame.model.Player;
 import yutgame.model.YutThrowResult;
 import yutgame.view.*;
 
-import javax.swing.*;
 import java.util.List;
 
 public class GameController {
