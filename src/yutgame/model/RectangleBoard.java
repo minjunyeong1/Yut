@@ -70,9 +70,6 @@ public class RectangleBoard extends Board{
         link(10, Cell.Path.DIAGONAL, 33);
         link(33, Cell.Path.OUTER,    34);
         link(34, Cell.Path.OUTER,    32);
-        //link(32, Cell.Path.OUTER,    37);
-        //link(37, Cell.Path.OUTER,    38);
-        //link(38, Cell.Path.OUTER,    20);
     }
 
     /* -------------------------------------------------------------------- */
@@ -88,4 +85,10 @@ public class RectangleBoard extends Board{
     public Cell getLastCell() {
         return cells.get(20); 
     }
+    
+    /** Piece 등 외부에서 셀을 조회할 때 사용 */
+    public Cell getCell(int id) {
+        return cells.get(id);
+    }
+
 }

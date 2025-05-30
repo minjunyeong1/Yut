@@ -1,7 +1,5 @@
 package yutgame.controller;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import yutgame.model.*;
 import yutgame.view.*;
 
@@ -16,7 +14,6 @@ public class GameController {
     public GameController(GameConfig config, GameModel model) {
         this.config = config;
         this.model = model;
-        // View는 나중에 setView()로 주입
     }
 
     /** View 연결 및 이벤트 핸들러 초기화 */
@@ -31,7 +28,7 @@ public class GameController {
     private void setupEventHandlers() {
         AbstractBoardView boardView = view.getBoardView();
 
-        
+        // 기존 YutThrowController 사용
         new YutThrowController(
             boardView.getThrowYutButton(),
             view.getYutResultView(),
@@ -135,9 +132,10 @@ public class GameController {
         view.getTurnView().updateTurn(currentIndex);
     }
 
-    /** 승리 알림 */
+    /** 승리 알림 (fully-qualified로 호출) */
     private void showVictoryAlert(String winnerName) {
-        Alert alert = new Alert(AlertType.INFORMATION);
+        javafx.scene.control.Alert alert =
+            new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alert.setTitle("게임 종료");
         alert.setHeaderText(null);
         alert.setContentText(winnerName + "님이 승리했습니다!");

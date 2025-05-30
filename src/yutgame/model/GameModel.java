@@ -24,7 +24,7 @@ public class GameModel {
         Cell start = board.getStartCell();  // 시작 위치 셀 가져오기
 
         for (int i = 0; i < config.getNumPlayers(); i++) {
-            players.add(new Player("P" + i, config.getPiecesPerPlayer(), start));
+            players.add(new Player(this, "P" + i, config.getPiecesPerPlayer(), start));
         }
 
         this.currentPlayerIndex = 0;

@@ -59,6 +59,14 @@ public class Piece {
             Cell next;
 
             if (dir > 0) {
+                if (i == 0) {
+                    int consumed = applySpecialRoute(absSteps);
+                    if (consumed > 0) {
+                        i += consumed - 1;  // ✅ consumed만큼 이미 이동했다고 간주
+                        continue;
+                    }
+                }
+
                 next = nextForwardCell(i == 0);
 
                 // 경로 기록: 대각선 진입 시 기록해 둠
@@ -98,6 +106,35 @@ public class Piece {
 
         return captured;
     }
+
+    private int applySpecialRoute(int steps) {
+        Board board = owner.getModel().getBoard();
+        if (board.getShape() != Board.Shape.RECTANGLE) return 0;
+        if (!(board instanceof RectangleBoard rectBoard)) return 0;
+
+        int pid = position.getId();
+
+        int consumed = 0;
+        if (pid == 10 && steps >= 4) consumed = 4;
+        else if (pid == 33 && steps >= 3) consumed = 3;
+        else if (pid == 34 && steps >= 2) consumed = 2;
+
+        if (consumed > 0) {
+            Cell target = rectBoard.getCell(37);
+            if (target != null) {
+                for (Piece p : passengers) position.leave(p);
+                position.leave(this);
+                position = target;
+                for (Piece p : passengers) p.setPosition(target);
+                setPosition(target);
+                return consumed;
+            }
+        }
+
+        return 0;
+    }
+
+
 
 
     private Cell nextForwardCell(boolean firstStep) {
