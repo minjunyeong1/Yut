@@ -2,8 +2,8 @@ package yutgame.controller;
 
 import yutgame.model.*;
 import yutgame.view.*;
-
 import java.util.List;
+import java.util.Optional;
 
 public class GameController {
 
@@ -29,7 +29,6 @@ public class GameController {
     private void setupEventHandlers() {
         AbstractBoardView boardView = view.getBoardView();
 
-        // 기존 YutThrowController 사용
         new YutThrowController(
             boardView.getThrowYutButton(),
             view.getYutResultView(),
@@ -133,13 +132,29 @@ public class GameController {
         view.getTurnView().updateTurn(currentIndex);
     }
 
-    /** 승리 알림 (fully-qualified로 호출) */
+    /** 승리 알림 및 재시작/종료 옵션 */
     private void showVictoryAlert(String winnerName) {
-        javafx.scene.control.Alert alert =
-            new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+            javafx.scene.control.Alert.AlertType.CONFIRMATION);
         alert.setTitle("게임 종료");
         alert.setHeaderText(null);
-        alert.setContentText(winnerName + "님이 승리했습니다!");
-        alert.showAndWait();
+        alert.setContentText(winnerName + "님이 승리했습니다!\n재시작 혹은 종료를 선택하세요.");
+
+        javafx.scene.control.ButtonType restart = new javafx.scene.control.ButtonType("재시작");
+        javafx.scene.control.ButtonType exit    = new javafx.scene.control.ButtonType(
+            "종료", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(restart, exit);
+
+        Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == restart) {
+            // 현재 게임 창 닫고 SettingView로 복귀
+            javafx.stage.Stage stage = (javafx.stage.Stage)
+                view.getBoardView().getScene().getWindow();
+            stage.close();
+            new SettingController();
+        } else {
+            // 애플리케이션 종료
+            javafx.application.Platform.exit();
+        }
     }
 }
