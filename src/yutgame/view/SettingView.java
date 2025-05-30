@@ -74,6 +74,7 @@ public class SettingView extends Stage {
         return boardShapeCombo.getValue().shape;
     }
 
+    @SuppressWarnings("unused")
     public void addStartListener(Runnable handler) {
         startButton.setOnAction(e -> handler.run());
     }

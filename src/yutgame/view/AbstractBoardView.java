@@ -1,8 +1,5 @@
 package yutgame.view;
 
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,6 +60,7 @@ public abstract class AbstractBoardView extends Pane {
         }
     }
 
+    @SuppressWarnings("unused")
     protected void addCommonButtons() {
         throwYutButton = new Button("윷 던지기");
         throwYutButton.setLayoutX(windowSizeX - 180);
@@ -135,6 +133,7 @@ public abstract class AbstractBoardView extends Pane {
         this.resultSelectionListener = listener;
     }
 
+    @SuppressWarnings("unused")
     public void showResultButtons(List<YutThrowResult> results) {
         int startX = windowSizeX / 2 - (results.size() * 60) / 2;
         int y = 500;

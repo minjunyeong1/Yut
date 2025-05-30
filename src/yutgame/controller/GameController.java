@@ -7,6 +7,7 @@ import java.util.List;
 
 public class GameController {
 
+    @SuppressWarnings("unused")
     private final GameConfig config;
     private final GameModel model;
     private MainView view;

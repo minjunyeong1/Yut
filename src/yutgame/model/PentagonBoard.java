@@ -2,8 +2,6 @@ package yutgame.model;
 
 import java.util.*;
 
-import yutgame.model.Board.Shape;
-
 public class PentagonBoard extends Board{
     private final Map<Integer, Cell> cells = new HashMap<>();
 

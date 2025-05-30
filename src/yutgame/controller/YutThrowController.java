@@ -33,6 +33,7 @@ public class YutThrowController {
         setup();
     }
 
+    @SuppressWarnings("unused")
     private void setup() {
         // 자동 윷 던지기 버튼
         throwYutButton.setOnAction(e -> {
