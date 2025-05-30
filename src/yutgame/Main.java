@@ -10,9 +10,9 @@ import yutgame.view.MainView;
 import yutgame.view.RectangleBoardView;
 import yutgame.view.PentagonBoardView;
 import yutgame.view.HexagonBoardView;
-import yutgame.view.SettingView;
 import yutgame.view.TurnView;
 import yutgame.view.YutResultView;
+import yutgame.view.SettingView;
 
 public class Main extends Application {
 

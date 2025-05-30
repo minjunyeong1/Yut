@@ -7,7 +7,7 @@ import yutgame.model.YutThrowResult;
 public class PieceMovementController {
     public List<Piece> movePiece(Piece piece, YutThrowResult result) {
         int steps;
-        switch(result) {
+        switch (result) {
             case BACKDO: steps = -1; break;
             case DO:     steps = 1;  break;
             case GAE:    steps = 2;  break;
@@ -16,6 +16,6 @@ public class PieceMovementController {
             case MO:     steps = 5;  break;
             default:     steps = 0;
         }
-        return piece.move(steps);  // ✅ 잡힌 말들 반환
+        return piece.move(steps);
     }
 }
