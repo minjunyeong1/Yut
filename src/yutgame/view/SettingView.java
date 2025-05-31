@@ -35,7 +35,7 @@ public class SettingView extends Stage {
         
         Label titleLabel = new Label("윷놀이 게임 설정");
         titleLabel.setFont(Font.font("맑은 고딕", FontWeight.BOLD, 24));
-        titleLabel.setTextFill(Color.rgb(102, 126, 234));
+        titleLabel.setTextFill(Color.rgb(234, 181, 102));
         
         Label subtitleLabel = new Label("게임 옵션을 선택해주세요");
         subtitleLabel.setFont(Font.font("맑은 고딕", 14));
@@ -48,14 +48,14 @@ public class SettingView extends Stage {
         settingsCard.setAlignment(Pos.CENTER);
         settingsCard.setPadding(new Insets(30));
         settingsCard.setStyle("-fx-background-color: white;" +
-                             "-fx-background-radius: 20;");
+                              "-fx-background-radius: 20;");
         settingsCard.setEffect(new DropShadow(20, Color.rgb(0, 0, 0, 0.1)));
         settingsCard.setMaxWidth(400);
 
         // Player count setting
         VBox playerSection = createSettingSection(
             "플레이어 수",
-            "2~4명이 함께 플레이할 수 있습니다"
+            "2~4명이 함께 플레이할 수 있습니다."
         );
         playerCountSpinner = new Spinner<>(2, 4, 2);
         playerCountSpinner.setPrefWidth(150);
@@ -65,7 +65,7 @@ public class SettingView extends Stage {
         // Pieces per player setting
         VBox piecesSection = createSettingSection(
             "말 개수",
-            "각 플레이어가 사용할 말의 개수입니다"
+            "각 플레이어는 2~5개의 말을 사용할 수 있습니다."
         );
         piecesPerPlayerSpinner = new Spinner<>(2, 5, 2);
         piecesPerPlayerSpinner.setPrefWidth(150);
@@ -92,30 +92,30 @@ public class SettingView extends Stage {
         // Start button
         startButton = new Button("게임 시작");
         startButton.setPrefSize(200, 45);
-        startButton.setStyle("-fx-background-color: #667eea;" +
-                           "-fx-text-fill: white;" +
-                           "-fx-font-size: 16px;" +
-                           "-fx-font-weight: bold;" +
-                           "-fx-background-radius: 25;" +
-                           "-fx-cursor: hand;");
+        startButton.setStyle("-fx-background-color:rgb(234, 197, 102);" +
+                             "-fx-text-fill: white;" +
+                             "-fx-font-size: 16px;" +
+                             "-fx-font-weight: bold;" +
+                             "-fx-background-radius: 25;" +
+                             "-fx-cursor: hand;");
         startButton.setEffect(new DropShadow(10, Color.rgb(102, 126, 234, 0.3)));
         
         // Hover effect
         startButton.setOnMouseEntered(e -> 
-            startButton.setStyle("-fx-background-color: #764ba2;" +
-                               "-fx-text-fill: white;" +
-                               "-fx-font-size: 16px;" +
-                               "-fx-font-weight: bold;" +
-                               "-fx-background-radius: 25;" +
-                               "-fx-cursor: hand;")
+            startButton.setStyle("-fx-background-color:rgb(162, 129, 75);" +
+                                 "-fx-text-fill: white;" +
+                                 "-fx-font-size: 16px;" +
+                                 "-fx-font-weight: bold;" +
+                                 "-fx-background-radius: 25;" +
+                                 "-fx-cursor: hand;")
         );
         startButton.setOnMouseExited(e -> 
-            startButton.setStyle("-fx-background-color: #667eea;" +
-                               "-fx-text-fill: white;" +
-                               "-fx-font-size: 16px;" +
-                               "-fx-font-weight: bold;" +
-                               "-fx-background-radius: 25;" +
-                               "-fx-cursor: hand;")
+            startButton.setStyle("-fx-background-color:rgb(234, 205, 102);" +
+                                 "-fx-text-fill: white;" +
+                                 "-fx-font-size: 16px;" +
+                                 "-fx-font-weight: bold;" +
+                                 "-fx-background-radius: 25;" +
+                                 "-fx-cursor: hand;")
         );
 
         // Add all sections to settings card
@@ -158,17 +158,17 @@ public class SettingView extends Stage {
 
     private void styleSpinner(Spinner<?> spinner) {
         spinner.setStyle("-fx-font-size: 14px;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-border-radius: 10;" +
-                        "-fx-border-color: #e0e0e0;");
+                         "-fx-background-radius: 10;" +
+                         "-fx-border-radius: 10;" +
+                         "-fx-border-color: #e0e0e0;");
         spinner.setEditable(false);
     }
 
     private void styleComboBox(ComboBox<?> comboBox) {
         comboBox.setStyle("-fx-font-size: 14px;" +
-                         "-fx-background-radius: 10;" +
-                         "-fx-border-radius: 10;" +
-                         "-fx-border-color: #e0e0e0;");
+                          "-fx-background-radius: 10;" +
+                          "-fx-border-radius: 10;" +
+                          "-fx-border-color: #e0e0e0;");
     }
 
     // Getters remain the same
