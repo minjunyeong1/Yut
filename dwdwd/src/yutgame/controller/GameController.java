@@ -116,7 +116,7 @@ public class GameController {
 
             // 5. 남은 윷 결과 없으면 턴 종료 판단
             if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
-                boolean yutMo = result == YutThrowResult.YUT || result == YutThrowResult.MO;
+                boolean yutMo = model.getCurrentPlayer().getlastisYutMo();
                 boolean extraTurn = turnHadCapture || yutMo; // ✅ 잡았거나 윷/모인 경우 추가 턴
 
                 if (extraTurn) {
