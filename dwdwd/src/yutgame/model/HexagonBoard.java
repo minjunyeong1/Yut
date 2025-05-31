@@ -83,6 +83,6 @@ public class HexagonBoard extends Board{
         cells.get(fromId).setNext(via, cells.get(toId));
     }
     public Cell getLastCell() {
-        return cells.get(24); 
+        return cells.get(29); 
     }
 }
