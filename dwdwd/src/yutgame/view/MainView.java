@@ -10,12 +10,10 @@ public class MainView extends JFrame {
     private TurnView turnView;
     private AbstractBoardView boardView;
     private YutResultView yutResultView;
-    private GameModel model;
 
-    public MainView(GameModel model, AbstractBoardView boardView) {
+    public MainView(AbstractBoardView boardView) {
         super("Yut Play");
         this.boardView = boardView;
-        this.model = model;
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);               // 절대좌표
@@ -59,10 +57,10 @@ public class MainView extends JFrame {
         return yutResultView;
     }
     
-    public void handleWinCondition() { // Controller에서 호출
+    public void handleWinCondition(String winnerName) {
         int choice = JOptionPane.showConfirmDialog(
                 this,
-                model.getCurrentPlayer().getName() + "님이 승리했습니다!\n 다시 시작하시겠습니까?",
+                winnerName + "님이 승리했습니다!\n 다시 시작하시겠습니까?",
                 "Game Over",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
@@ -74,9 +72,5 @@ public class MainView extends JFrame {
         } else {
             System.exit(0);
         }
-    }
-    
-    public GameModel getModel() {
-        return model;
     }
 }

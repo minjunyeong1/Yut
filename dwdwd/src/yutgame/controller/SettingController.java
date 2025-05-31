@@ -38,7 +38,7 @@ public class SettingController {
                 boardView = new RectangleBoardView(config, model, null);
         }
 
-        MainView view = new MainView(model, boardView); // GameModel 전달
+        MainView view = new MainView(boardView); // GameModel 전달
         GameController gc = new GameController(model, view);
         boardView.setGameController(gc);
 

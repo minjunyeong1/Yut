@@ -109,7 +109,8 @@ public class GameController {
 
             // 4. 승리 판정
             if (model.isCurrentPlayerWinner()) {
-                view.handleWinCondition();
+                String winner = model.getCurrentPlayer().getName();
+                view.handleWinCondition(winner);  // ✅ model은 Controller에서만 접근
                 return;
             }
 
