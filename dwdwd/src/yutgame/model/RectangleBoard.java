@@ -83,10 +83,9 @@ public class RectangleBoard extends Board{
     }
     
     public Cell getLastCell() {
-        return cells.get(20); 
+        return cells.get(19); 
     }
     
-    /** Piece 등 외부에서 셀을 조회할 때 사용 */
     public Cell getCell(int id) {
         return cells.get(id);
     }

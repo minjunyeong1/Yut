@@ -1,6 +1,9 @@
 package yutgame.view;
 
 import javax.swing.*;
+
+import yutgame.model.YutThrowResult;
+
 import java.awt.*;
 
 public class YutResultView extends JPanel {

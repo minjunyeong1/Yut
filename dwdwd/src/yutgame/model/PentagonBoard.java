@@ -77,6 +77,6 @@ public class PentagonBoard extends Board{
         cells.get(fromId).setNext(via, cells.get(toId));
     }
     public Cell getLastCell() {
-        return cells.get(30); 
+        return cells.get(29); 
     }
 }

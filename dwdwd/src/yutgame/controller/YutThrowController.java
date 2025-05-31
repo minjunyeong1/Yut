@@ -13,7 +13,8 @@ public class YutThrowController {
     private final GameModel model;
     private final Random random;
     private Consumer<YutThrowResult> yutThrowCallback; // 윷 던지기 결과 처리 콜백
-
+    private Runnable backdoSkipCallback;
+    
     public YutThrowController(GameModel model) {
         this.model = model;
         this.random = new Random();
@@ -25,6 +26,10 @@ public class YutThrowController {
      */
     public void setYutThrowCallback(Consumer<YutThrowResult> callback) {
         this.yutThrowCallback = callback;
+    }
+    
+    public void setBackdoSkipCallback(Runnable callback) {
+        this.backdoSkipCallback = callback;
     }
 
     /**
@@ -69,8 +74,8 @@ public class YutThrowController {
             .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
 
         if (hasOnlyBackdo && allAtStartCell) {
-            model.getCurrentPlayer().getYutHistory().remove(result);
-            //gameController.nextTurn();
+        	model.getCurrentPlayer().getYutHistory().remove(result);
+            if (backdoSkipCallback != null) backdoSkipCallback.run();  // ✅ 턴 넘김 요청
         }
     }
 }

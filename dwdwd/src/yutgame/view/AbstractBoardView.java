@@ -215,4 +215,5 @@ public abstract class AbstractBoardView extends JPanel {
     public void setGameController(GameController controller) {
         this.gameController = controller;
     }
+
 }
