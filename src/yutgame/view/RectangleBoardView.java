@@ -2,6 +2,7 @@ package yutgame.view;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import yutgame.controller.GameController;
 import yutgame.model.*;
 

@@ -1,51 +1,47 @@
 package yutgame.controller;
 
-import yutgame.model.Board;
-import yutgame.model.GameConfig;
-import yutgame.model.GameModel;
-import yutgame.view.AbstractBoardView;
-import yutgame.view.HexagonBoardView;
-import yutgame.view.MainView;
-import yutgame.view.PentagonBoardView;
-import yutgame.view.RectangleBoardView;
-import yutgame.view.TurnView;
-import yutgame.view.YutResultView;
-import yutgame.view.SettingView;
+import javafx.stage.Stage;
+import yutgame.model.*;
+import yutgame.view.*;
 
+/**
+ * Coordinates the settings window and game launch.
+ */
 public class SettingController {
+    private SettingView settingView;
 
-    private final SettingView settingView;
-
-    public SettingController() {
+    public SettingController(Stage primaryStage) {
         settingView = new SettingView();
-        settingView.addStartListener(this::onStart);
-        settingView.show();
+        settingView.addStartListener(() -> onStart(primaryStage));
     }
 
-    private void onStart() {
+    private void onStart(Stage stageToClose) {
         int players = settingView.getPlayerCount();
         int pieces  = settingView.getPiecesPerPlayer();
         Board.Shape shape = settingView.getSelectedShape();
 
-        settingView.close();
+        stageToClose.close();
 
         GameConfig config = new GameConfig(players, pieces, shape);
-        GameModel model    = new GameModel(config);
-        GameController controller = new GameController(config, model);
+        GameModel model   = new GameModel(config);
 
-        AbstractBoardView boardView = switch (shape) {
-            case PENTAGON -> new PentagonBoardView(config, model, controller);
-            case HEXAGON  -> new HexagonBoardView(config, model, controller);
-            default       -> new RectangleBoardView(config, model, controller);
-        };
+        AbstractBoardView boardView;
 
-        MainView view = new MainView();
-        view.setBoardView(boardView);
-        view.setTurnView(new TurnView());
-        view.setYutResultView(new YutResultView());
+        switch(shape) {
+            case PENTAGON:
+                boardView = new PentagonBoardView(config, model, null);
+                break;
+            case HEXAGON:
+                boardView = new HexagonBoardView(config, model, null);
+                break;
+            default:
+                boardView = new RectangleBoardView(config, model, null);
+        }
 
-        view.start(new javafx.stage.Stage());
-        controller.setView(view);
-        boardView.setGameController(controller);
+        MainView view = new MainView(boardView); // GameModel 전달
+        GameController gc = new GameController(model, view);
+        boardView.setGameController(gc);
+
+        view.show();
     }
 }

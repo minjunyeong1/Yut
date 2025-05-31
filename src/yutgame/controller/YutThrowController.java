@@ -1,54 +1,52 @@
 package yutgame.controller;
 
-import java.util.Map;
-import java.util.Random;
 import yutgame.model.GameModel;
-import yutgame.model.Player;
 import yutgame.model.YutThrowResult;
-import yutgame.view.AbstractBoardView;
-import yutgame.view.YutResultView;
 
+import java.util.Random;
+import java.util.function.Consumer;
+
+/**
+ * 윷 던지기 동작을 처리하는 컨트롤러
+ */
 public class YutThrowController {
-
-    private final javafx.scene.control.Button throwYutButton;
-    private final YutResultView resultView;
     private final GameModel model;
-    private final GameController gameController;
-    private final AbstractBoardView boardView;
     private final Random random;
-
-    public YutThrowController(
-            javafx.scene.control.Button throwYutButton,
-            YutResultView resultView,
-            GameModel model,
-            GameController gameController,
-            AbstractBoardView boardView
-    ) {
-        this.throwYutButton = throwYutButton;
-        this.resultView     = resultView;
-        this.model          = model;
-        this.gameController = gameController;
-        this.boardView      = boardView;
-        this.random         = new Random();
-        setup();
+    private Consumer<YutThrowResult> yutThrowCallback; // 윷 던지기 결과 처리 콜백
+    private Runnable backdoSkipCallback;
+    
+    public YutThrowController(GameModel model) {
+        this.model = model;
+        this.random = new Random();
     }
 
-    private void setup() {
-        // 자동 윷 던지기 버튼
-        throwYutButton.setOnAction(e -> {
-            YutThrowResult result = throwYut();
-            handleManualThrow(result);
-        });
+    /**
+     * 윷 던지기 버튼 클릭 시 호출될 콜백 함수를 설정
+     *callback 윷 던지기 결과를 처리할 콜백 함수
+     */
+    public void setYutThrowCallback(Consumer<YutThrowResult> callback) {
+        this.yutThrowCallback = callback;
+    }
+    
+    public void setBackdoSkipCallback(Runnable callback) {
+        this.backdoSkipCallback = callback;
+    }
 
-        // 수동 윷 결과 버튼들
-        Map<String, javafx.scene.control.Button> yutButtons = boardView.getYutChoiceButtons();
-        for (Map.Entry<String, javafx.scene.control.Button> entry : yutButtons.entrySet()) {
-            javafx.scene.control.Button btn = entry.getValue();
-            btn.setOnAction(evt -> handleManualThrow(YutThrowResult.valueOf(entry.getKey())));
+    /**
+     * 윷을 던지는 동작을 수행하고, 결과를 콜백 함수를 통해 알림
+     */
+    public void throwYut() {
+        YutThrowResult result = getRandomYutResult();
+        model.getCurrentPlayer().addYutResult(result); // Model 업데이트
+        if (yutThrowCallback != null) {
+            yutThrowCallback.accept(result); // View에 결과 전달
         }
     }
 
-    private YutThrowResult throwYut() {
+    /**
+     * 랜덤하게 윷 결과를 생성
+     */
+    private YutThrowResult getRandomYutResult() {
         int[] values = {-1, 1, 2, 3, 4, 5};
         int value = values[random.nextInt(values.length)];
         return switch (value) {
@@ -63,23 +61,21 @@ public class YutThrowController {
     }
 
     public void handleManualThrow(YutThrowResult result) {
-        Player currentPlayer = model.getCurrentPlayer();
-        if (!currentPlayer.canAddMoreResults()) return;
+        model.getCurrentPlayer().addYutResult(result);
 
-        resultView.setResult(result.toString());
-        currentPlayer.addYutResult(result);
+        if (yutThrowCallback != null) {
+            yutThrowCallback.accept(result);
+        }
 
-        boolean hasOnlyBackdo = currentPlayer.getYutHistory().size() == 1
-            && currentPlayer.getYutHistory().get(0).getValue() == -1;
-        boolean allAtStartCell = currentPlayer.getPieces().stream()
+        boolean hasOnlyBackdo = model.getCurrentPlayer().getYutHistory().size() == 1 &&
+            model.getCurrentPlayer().getYutHistory().get(0).getValue() == -1;
+
+        boolean allAtStartCell = model.getCurrentPlayer().getPieces().stream()
             .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
 
         if (hasOnlyBackdo && allAtStartCell) {
-            currentPlayer.getYutHistory().clear();
-            boardView.clearSelectedPiece();
-            boardView.updatePieceIcons();
-            resultView.clearResults();
-            gameController.nextTurn();
+        	model.getCurrentPlayer().getYutHistory().remove(result);
+            if (backdoSkipCallback != null) backdoSkipCallback.run(); 
         }
     }
 }

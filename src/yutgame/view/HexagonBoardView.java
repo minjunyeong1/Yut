@@ -2,6 +2,7 @@ package yutgame.view;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -37,7 +38,6 @@ public class HexagonBoardView extends AbstractBoardView {
 
         mapHexagonCellPositions(cx, cy + 20, bs); // 20px shift for vertical offset
 
-        @SuppressWarnings("unused")
         Set<Integer> bigCircleIds = Set.of(5, 10, 15, 20, 25, 37);
 
         for (Map.Entry<Integer, Point2D> entry : cellIdToPosition.entrySet()) {

@@ -10,7 +10,7 @@ public enum YutThrowResult {
     GEO(3, "걸"),
     YUT(4, "윷"),
     MO(5, "모");
-
+	
     private final int value;
     private final String display;
 

@@ -2,6 +2,8 @@ package yutgame.model;
 
 import java.util.*;
 
+import yutgame.model.Board.Shape;
+
 public class HexagonBoard extends Board{
     private final Map<Integer, Cell> cells = new HashMap<>();
 
@@ -81,6 +83,6 @@ public class HexagonBoard extends Board{
         cells.get(fromId).setNext(via, cells.get(toId));
     }
     public Cell getLastCell() {
-        return cells.get(25); 
+        return cells.get(24); 
     }
 }

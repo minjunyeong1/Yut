@@ -2,6 +2,8 @@ package yutgame.model;
 
 import java.util.*;
 
+import yutgame.model.Board.Shape;
+
 public class PentagonBoard extends Board{
     private final Map<Integer, Cell> cells = new HashMap<>();
 
@@ -75,6 +77,6 @@ public class PentagonBoard extends Board{
         cells.get(fromId).setNext(via, cells.get(toId));
     }
     public Cell getLastCell() {
-        return cells.get(30); 
+        return cells.get(29); 
     }
 }

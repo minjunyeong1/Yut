@@ -5,57 +5,43 @@ import javafx.stage.Stage;
 import yutgame.controller.GameController;
 import yutgame.model.GameConfig;
 import yutgame.model.GameModel;
-import yutgame.view.AbstractBoardView;
-import yutgame.view.MainView;
-import yutgame.view.RectangleBoardView;
-import yutgame.view.PentagonBoardView;
-import yutgame.view.HexagonBoardView;
-import yutgame.view.TurnView;
-import yutgame.view.YutResultView;
-import yutgame.view.SettingView;
+import yutgame.view.*;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        SettingView settingView = new SettingView();
+        SettingView settingView = new SettingView(); // show()는 내부에서 자동 호출됨
 
         settingView.addStartListener(() -> {
-            // 1) 모델·컨트롤러 생성
+            // 설정값 기반 config, model 생성
             GameConfig config = new GameConfig(
-                settingView.getPlayerCount(),
-                settingView.getPiecesPerPlayer(),
-                settingView.getSelectedShape()
+                    settingView.getPlayerCount(),
+                    settingView.getPiecesPerPlayer(),
+                    settingView.getSelectedShape()
             );
             GameModel model = new GameModel(config);
-            GameController controller = new GameController(config, model);
 
-            // 2) 보드 뷰 생성 및 컨트롤러 주입
+            // 보드 뷰 생성 (controller는 아직 null로 둠)
             AbstractBoardView board = switch (config.getBoardShape()) {
-                case RECTANGLE -> new RectangleBoardView(config, model, controller);
-                case PENTAGON  -> new PentagonBoardView(config, model, controller);
-                case HEXAGON   -> new HexagonBoardView(config, model, controller);
+                case RECTANGLE -> new RectangleBoardView(config, model, null);
+                case PENTAGON  -> new PentagonBoardView(config, model, null);
+                case HEXAGON   -> new HexagonBoardView(config, model, null);
             };
-            board.setGameController(controller);
 
-            // 3) MainView 세팅
-            MainView main = new MainView();
-            main.setBoardView(board);
-            main.setTurnView(new TurnView());
-            main.setYutResultView(new YutResultView());
+            // MainView 생성 (보드 뷰 주입)
+            MainView main = new MainView(board);
 
-            // 4) 뷰를 먼저 초기화해서 버튼들이 생성되도록
-            Stage gameStage = new Stage();
-            main.start(gameStage);
+            // GameController 생성 후 view 연결
+            GameController controller = new GameController(model, main);
+            board.setGameController(controller); // board에도 controller 주입
 
-            // 5) 컨트롤러에 뷰를 연결하여 이벤트 핸들러 등록
-            controller.setView(main);
+            // 메인 창 띄우기
+            main.show();
 
-            // 6) 설정 창 닫기
+            // 설정 창 닫기
             settingView.close();
         });
-
-        settingView.show();
     }
 
     public static void main(String[] args) {

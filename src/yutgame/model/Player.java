@@ -21,16 +21,18 @@ public class Player {
             pieces.add(p);
         }
     }
-    public void addYutResult(YutThrowResult result) {
-    	 if (!canAddResult) {
-    	        return;
-    	    }
-
-    	    yutHistory.add(result);
-
-    	    if (result != YutThrowResult.YUT && result != YutThrowResult.MO) {
-    	        canAddResult = false;
-    	    }
+    public boolean addYutResult(YutThrowResult result) {
+        if (!canAddResult) {         
+            return false;            
+        }
+        
+        yutHistory.add(result);      
+        
+        if (result != YutThrowResult.YUT && result != YutThrowResult.MO) {
+            canAddResult = false;
+        }
+        
+        return true;                 
     }
 
     public GameModel getModel() {
@@ -59,5 +61,8 @@ public class Player {
     public void setCanAddResult(boolean value) {
         this.canAddResult = value;
     }
+	public boolean canAddResult() {
+		return canAddResult;
+	}
 
 }
