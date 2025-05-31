@@ -1,8 +1,6 @@
 package yutgame.view;
 
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -37,6 +35,7 @@ public abstract class AbstractBoardView extends Pane {
         this.model = model;
         this.gameController = controller;
 
+        // 보드 전체 크기(가로 1000, 세로 700) 설정
         setPrefSize(windowSizeX, windowSizeY);
         setStyle("-fx-background-color: white;");
     }
@@ -48,6 +47,9 @@ public abstract class AbstractBoardView extends Pane {
         addCommonButtons();
     }
 
+    /**
+     * 플레이어 아이콘(원 모양) 4개를 보드 상단에 추가하는 메서드
+     */
     protected void addPlayerIcons() {
         String[] colors = { "blue", "green", "red", "yellow" };
         int startX = 500;
@@ -63,15 +65,21 @@ public abstract class AbstractBoardView extends Pane {
         }
     }
 
+    /**
+     * 공통 버튼(랜덤 윷 던지기 / 수동 윷 결과 / 말 선택 버튼)을 모두 보드 위에 올리는 메서드
+     */
     protected void addCommonButtons() {
-        throwYutButton = new Button("윷 던지기");
-        throwYutButton.setLayoutX(windowSizeX - 180);
-        throwYutButton.setLayoutY(50);
-        throwYutButton.setPrefSize(120, 40);
+        // ── 1) “랜덤 윷 던지기” 버튼 ────────────────────────
+        throwYutButton = new Button("랜덤 윷 던지기");
+        throwYutButton.setLayoutX(windowSizeX - 200);
+        throwYutButton.setLayoutY(windowSizeY - 50);
+        throwYutButton.setPrefSize(120, 35);
         getChildren().add(throwYutButton);
 
+        // ── 2) 플레이어 아이콘(원) 추가 ─────────────────────
         addPlayerIcons();
 
+        // ── 3) 수동 윷 선택 버튼 (“빽도”, “도”, “개”, “걸”, “윷”, “모”) ────
         String[] labels = {"빽도", "도", "개", "걸", "윷", "모"};
         YutThrowResult[] results = {
             YutThrowResult.BACKDO, YutThrowResult.DO, YutThrowResult.GAE,
@@ -95,32 +103,34 @@ public abstract class AbstractBoardView extends Pane {
             getChildren().add(yutBtn);
         }
 
+        // ── 4) 말 선택 버튼 (“1번 말”, “2번 말”, …) ─────────────────
         int pieceCount = config != null ? config.getPiecesPerPlayer() : 4;
         int pieceButtonStartY = 600;
-        int pieceButtonHeight = 35;
+        int pieceButtonHeight2 = 35;
 
         for (int i = 0; i < pieceCount; i++) {
             Button pieceBtn = new Button((i + 1) + "번 말");
-            pieceBtn.setLayoutX(windowSizeX / 2 - 200 + i * 90);
+            pieceBtn.setLayoutX(windowSizeX / 2 - 205 + i * 90);
             pieceBtn.setLayoutY(pieceButtonStartY);
-            pieceBtn.setPrefSize(80, pieceButtonHeight);
+            pieceBtn.setPrefSize(80, pieceButtonHeight2);
 
             final int pieceIndex = i;
             pieceBtn.setOnAction(e -> {
                 Player p = model.getPlayers().get(model.getCurrentPlayerIndex());
                 selectedPiece = p.getPieces().get(pieceIndex);
 
+                // 이미 도착한 말이라면 선택 취소만 처리
                 if (selectedPiece.isFinished()) {
                     selectedPiece = null;
                     updatePieceIcons();
                     return;
                 }
 
+                // 현재 플레이어의 윷 결과 목록을 복사해서, “빽도” 불가 조건 걸기
                 List<YutThrowResult> filteredResults = new ArrayList<>(p.getYutHistory());
-
-                if (selectedPiece.getPosition() != null &&
-                        selectedPiece.getPosition().getId() == 0) {
-                    filteredResults.removeIf(r -> r.getValue() == -1); // 빽도 제거
+                if (selectedPiece.getPosition() != null
+                        && selectedPiece.getPosition().getId() == 0) {
+                    filteredResults.removeIf(r -> r.getValue() == -1);
                 }
 
                 showResultButtons(filteredResults);
@@ -131,14 +141,21 @@ public abstract class AbstractBoardView extends Pane {
         }
     }
 
+    /**
+     * 컨트롤러가 “수동 윷 결과 버튼(빽도/도/개/…)”을 클릭했을 때 호출할 리스너를 등록
+     */
     public void setResultSelectionListener(Consumer<YutThrowResult> listener) {
         this.resultSelectionListener = listener;
     }
 
+    /**
+     * 현재 선택 가능한 윷 결과(빽도/도/개/걸/윷/모) 버튼을 보드 중앙 아래쪽에 표시
+     */
     public void showResultButtons(List<YutThrowResult> results) {
         int startX = windowSizeX / 2 - (results.size() * 60) / 2;
         int y = 500;
 
+        // 기존에 있던 버튼 삭제
         resultButtons.values().forEach(this.getChildren()::remove);
         resultButtons.clear();
 
@@ -163,6 +180,9 @@ public abstract class AbstractBoardView extends Pane {
         }
     }
 
+    /**
+     * 이미 고른 “수동 윷 결과 버튼” 하나를 제거할 때 사용
+     */
     public void removeResultButton(YutThrowResult result) {
         Iterator<Map.Entry<String, Button>> it = resultButtons.entrySet().iterator();
         while (it.hasNext()) {
@@ -175,8 +195,11 @@ public abstract class AbstractBoardView extends Pane {
         }
     }
 
+    /**
+     * 말 아이콘을 화면에 다시 그려야 할 때(이동 후 등) 서브클래스에서 Override하여 처리
+     */
     public void updatePieceIcons() {
-        // override in subclass if using Canvas
+        // 서브클래스에서 override
     }
 
     public Piece getSelectedPiece() {
@@ -184,15 +207,11 @@ public abstract class AbstractBoardView extends Pane {
     }
 
     public void clearSelectedPiece() {
-        selectedPiece = null;
+        this.selectedPiece = null;
     }
 
     public Button getThrowYutButton() {
         return throwYutButton;
-    }
-
-    public Button getDeployPieceButton() {
-        return deployPieceButton;
     }
 
     public Map<String, Button> getYutChoiceButtons() {
