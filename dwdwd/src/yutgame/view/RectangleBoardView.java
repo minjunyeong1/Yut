@@ -1,84 +1,69 @@
 package yutgame.view;
 
-import javax.swing.*;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import yutgame.controller.GameController;
-import yutgame.controller.PieceMovementController;
-import yutgame.model.GameConfig;
-import yutgame.model.GameModel;
-import yutgame.model.Piece;
-import yutgame.model.Player;
-import yutgame.model.YutThrowResult;
+import yutgame.model.*;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class RectangleBoardView extends AbstractBoardView {
-    private JButton[][] panButton = new JButton[3][21];
-    private JLabel lineLabel;
-    private Map<Integer, Point> cellIdToPosition = new HashMap<>();
-    private List<JLabel> pieceIconLabels = new ArrayList<>();
-    private JButton highlightedCellButton = null;
 
-    private final ImageIcon[] pieceIcons = {
-        new ImageIcon(getClass().getResource("/yutgame/img/blue1.jpg")),
-        new ImageIcon(getClass().getResource("/yutgame/img/green1.jpg")),
-        new ImageIcon(getClass().getResource("/yutgame/img/red1.jpg")),
-        new ImageIcon(getClass().getResource("/yutgame/img/yellow1.jpg"))
-    };
+    private final Map<Integer, javafx.geometry.Point2D> cellIdToPosition = new HashMap<>();
+    private final List<ImageView> pieceIcons = new ArrayList<>();
+    private ImageView lineImageView;
 
     public RectangleBoardView(GameConfig config, GameModel model, GameController controller) {
         super(config, model, controller);
+        initialize();
         addCommonButtons();
     }
 
     @Override
     protected void buildBoard() {
-        int bsx = windowSizeX / 20;
-        int bsy = bsx;
+        double bsx = windowSizeX / 20.0;
+        double bsy = bsx;
         double interval = bsx * 1.25;
 
-        lineLabel = new JLabel(new ImageIcon(getClass().getResource("/yutgame/img/line.png")));
-        lineLabel.setBounds(52, 50, 330, 332);
-        add(lineLabel);
+        // 선 이미지
+        Image lineImage = new Image(getClass().getResource("/yutgame/img/line.png").toExternalForm());
+        lineImageView = new ImageView(lineImage);
+        lineImageView.setLayoutX(52);
+        lineImageView.setLayoutY(50);
+        getChildren().add(lineImageView);
 
-        int xpos = bsx * 7;
-        int ypos = bsy * 7;
+        double xpos = bsx * 7;
+        double ypos = bsy * 7;
 
+        // ── 외곽 셀 (1~20) ─────────────────────
         for (int i = 1; i <= 20; i++) {
             if (i < 6) ypos -= interval;
             else if (i < 11) xpos -= interval;
             else if (i < 16) ypos += interval;
             else xpos += interval;
 
-            ImageIcon icon = (i==5||i==10||i==15)
-                ? new ImageIcon(getClass().getResource("/yutgame/img/bigcircle.jpg"))
-                : (i==20)
-                  ? new ImageIcon(getClass().getResource("/yutgame/img/startcircle.jpg"))
-                  : new ImageIcon(getClass().getResource("/yutgame/img/circle.jpg"));
+            String imgName = switch (i) {
+                case 5, 10, 15 -> "bigcircle.jpg";
+                case 20       -> "startcircle.jpg";
+                default       -> "circle.jpg";
+            };
 
-            JButton btn = new JButton(icon);
-            btn.setBounds(xpos, ypos, bsx, bsy);
-            btn.setContentAreaFilled(false);
-            btn.setBorderPainted(false);
-            btn.setFocusPainted(false);
-            btn.setOpaque(false);
+            Image img = new Image(getClass().getResource("/yutgame/img/" + imgName).toExternalForm());
+            ImageView cell = new ImageView(img);
+            cell.setFitWidth(bsx);
+            cell.setFitHeight(bsy);
+            cell.setLayoutX(xpos);
+            cell.setLayoutY(ypos);
 
-            panButton[0][i] = btn;
-            add(btn);
-            cellIdToPosition.put(i, new Point(xpos + bsx / 2, ypos + bsy / 2));
-
+            getChildren().add(cell);
+            cellIdToPosition.put(i, new javafx.geometry.Point2D(xpos + bsx / 2, ypos + bsy / 2));
             if (i == 20) {
-                cellIdToPosition.put(0, new Point(xpos + bsx / 2, ypos + bsy / 2));
+                cellIdToPosition.put(0, new javafx.geometry.Point2D(xpos + bsx / 2, ypos + bsy / 2));
             }
         }
 
-        // 오른쪽 대각선
+        // ── 대각선 우측 셀 ─────────────────────
         int[] diagRightIds = {5, 30, 31, 32, 35, 36, 15};
         xpos = bsx * 7 - 10;
         ypos = bsy - 10;
@@ -89,19 +74,21 @@ public class RectangleBoardView extends AbstractBoardView {
                 ypos += bsy;
             }
 
-            JButton btn = new JButton(new ImageIcon(getClass().getResource("/yutgame/img/circle.jpg")));
-            btn.setBounds(xpos, ypos, bsx, bsy);
-            btn.setContentAreaFilled(false);
-            btn.setBorderPainted(false);
-            btn.setFocusPainted(false);
-            btn.setOpaque(false);
+            int id = diagRightIds[i];
+            if (cellIdToPosition.containsKey(id)) continue;
 
-            panButton[1][i] = btn;
-            add(btn);
-            cellIdToPosition.put(diagRightIds[i], new Point(xpos + bsx / 2, ypos + bsy / 2));
+            Image img = new Image(getClass().getResource("/yutgame/img/circle.jpg").toExternalForm());
+            ImageView cell = new ImageView(img);
+            cell.setFitWidth(bsx);
+            cell.setFitHeight(bsy);
+            cell.setLayoutX(xpos);
+            cell.setLayoutY(ypos);
+
+            getChildren().add(cell);
+            cellIdToPosition.put(id, new javafx.geometry.Point2D(xpos + bsx / 2, ypos + bsy / 2));
         }
 
-        // 왼쪽 대각선
+        // ── 대각선 좌측 셀 ─────────────────────
         int[] diagLeftIds = {10, 33, 34, 32, 37, 38, 20};
         xpos = bsx - 10;
         ypos = bsy - 10;
@@ -112,87 +99,90 @@ public class RectangleBoardView extends AbstractBoardView {
                 ypos += bsy;
             }
 
-            ImageIcon icon = (i == 3)
-                ? new ImageIcon(getClass().getResource("/yutgame/img/bigcircle.jpg"))
-                : new ImageIcon(getClass().getResource("/yutgame/img/circle.jpg"));
+            int id = diagLeftIds[i];
+            if (cellIdToPosition.containsKey(id)) continue;
 
-            JButton btn = new JButton(icon);
-            btn.setBounds(xpos, ypos, bsx, bsy);
-            btn.setContentAreaFilled(false);
-            btn.setBorderPainted(false);
-            btn.setFocusPainted(false);
-            btn.setOpaque(false);
+            String imgName = (i == 3) ? "bigcircle.jpg" : "circle.jpg";
+            Image img = new Image(getClass().getResource("/yutgame/img/" + imgName).toExternalForm());
+            ImageView cell = new ImageView(img);
+            cell.setFitWidth(bsx);
+            cell.setFitHeight(bsy);
+            cell.setLayoutX(xpos);
+            cell.setLayoutY(ypos);
 
-            panButton[2][i] = btn;
-            add(btn);
-            cellIdToPosition.put(diagLeftIds[i], new Point(xpos + bsx / 2, ypos + bsy / 2));
+            getChildren().add(cell);
+            cellIdToPosition.put(id, new javafx.geometry.Point2D(xpos + bsx / 2, ypos + bsy / 2));
         }
+
+     // ── 중심 셀(32) bigcircle로 덮어쓰기 ─────────────────────
+        javafx.geometry.Point2D centerPos = cellIdToPosition.get(32);
+        if (centerPos != null) {
+            double centerX = centerPos.getX() - bsx / 2;
+            double centerY = centerPos.getY() - bsy / 2;
+
+            ImageView bigCenter = new ImageView(new Image(
+                getClass().getResource("/yutgame/img/bigcircle.jpg").toExternalForm()));
+            bigCenter.setFitWidth(bsx);
+            bigCenter.setFitHeight(bsy);
+            bigCenter.setLayoutX(centerX);
+            bigCenter.setLayoutY(centerY);
+
+            getChildren().add(bigCenter);  // 마지막에 추가되므로 위에 렌더됨
+        }
+
+        
         updatePieceIcons();
-        repaint();
     }
+
+
 
     @Override
     public void updatePieceIcons() {
-        for (JLabel label : pieceIconLabels) {
-            remove(label);
-        }
-        pieceIconLabels.clear();
+        getChildren().removeAll(pieceIcons);
+        pieceIcons.clear();
 
         List<Player> players = model.getPlayers();
-        String[] colorNames = { "blue", "green", "red", "yellow" };
-
-        Set<Integer> drawnCellIds = new HashSet<>();
+        String[] colors = { "blue", "green", "red", "yellow" };
+        Set<Integer> drawn = new HashSet<>();
 
         for (int playerIndex = 0; playerIndex < players.size(); playerIndex++) {
             Player player = players.get(playerIndex);
-            String color = colorNames[playerIndex % colorNames.length];
+            String color = colors[playerIndex % colors.length];
 
             for (Piece piece : player.getPieces()) {
                 Piece leader = piece.isLeader() ? piece : piece.getLeader();
-
                 if (leader == null || leader.getPosition() == null) continue;
 
                 int cellId = leader.getPosition().getId();
-                if (cellId == 0 || drawnCellIds.contains(cellId)) continue;
+                if (cellId == 0 || drawn.contains(cellId)) continue;
+                drawn.add(cellId);
 
-                drawnCellIds.add(cellId);
-
-                Point pos = cellIdToPosition.get(cellId);
+                javafx.geometry.Point2D pos = cellIdToPosition.get(cellId);
                 if (pos == null) continue;
 
-                int stackSize = leader.getStackSize();
-                stackSize = Math.min(stackSize, 5);
+                int stack = Math.min(leader.getStackSize(), 5);
+                String imagePath = String.format("/yutgame/img/big%s%d.jpg", color, stack);
+                ImageView icon = new ImageView(new Image(getClass().getResource(imagePath).toExternalForm()));
+                icon.setFitWidth(30);
+                icon.setFitHeight(30);
+                icon.setLayoutX(pos.getX() - 15);
+                icon.setLayoutY(pos.getY() - 15);
 
-                String imagePath = String.format("/yutgame/img/big%s%d.jpg", color, stackSize);
-                ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
-
-                JLabel iconLabel = new JLabel(icon);
-                iconLabel.setBounds(pos.x - 15, pos.y - 15, 30, 30);
-                
                 if (selectedPiece != null) {
                     Piece selectedLeader = selectedPiece.isLeader() ? selectedPiece : selectedPiece.getLeader();
-                    Player currentPlayer = model.getCurrentPlayer();
-
                     if (selectedLeader != null && selectedLeader.getPosition() != null &&
-                        currentPlayer.getPieces().contains(selectedLeader)) {
-
-                        int selectedId = selectedLeader.getPosition().getId();
-                        if (selectedId == cellId) {
-                            iconLabel.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 128), 3));
-                        }
+                        selectedLeader.getPosition().getId() == cellId &&
+                        player.getPieces().contains(selectedLeader)) {
+                        icon.setStyle("-fx-effect: dropshadow(gaussian, purple, 10, 0.5, 0, 0);");
                     }
                 }
 
-                
-                add(iconLabel);
-                setComponentZOrder(iconLabel, 0);
-                pieceIconLabels.add(iconLabel);
+                getChildren().add(icon);
+                pieceIcons.add(icon);
             }
         }
 
-        setComponentZOrder(lineLabel, getComponentCount() - 1);
-        repaint();
+        getChildren().remove(lineImageView);
+        getChildren().add(0, lineImageView);
     }
-
-
 }

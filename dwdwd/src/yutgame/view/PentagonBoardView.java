@@ -1,172 +1,158 @@
 package yutgame.view;
 
-import javax.swing.*;
-
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.geometry.Point2D;
 import yutgame.controller.GameController;
-import yutgame.model.GameConfig;
-import yutgame.model.GameModel;
-import yutgame.model.Piece;
-import yutgame.model.Player;
+import yutgame.model.*;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class PentagonBoardView extends AbstractBoardView {
-    private JLabel lineLabel;
-    private final Map<Integer, Point> cellIdToPosition = new HashMap<>();
-    private final List<JLabel> pieceIconLabels = new ArrayList<>();
-
-    private final ImageIcon[] pieceIcons = {
-        new ImageIcon(getClass().getResource("/yutgame/img/blue1.jpg")),
-        new ImageIcon(getClass().getResource("/yutgame/img/green1.jpg")),
-        new ImageIcon(getClass().getResource("/yutgame/img/red1.jpg")),
-        new ImageIcon(getClass().getResource("/yutgame/img/yellow1.jpg"))
-    };
+    private final Map<Integer, Point2D> cellIdToPosition = new HashMap<>();
+    private final List<ImageView> pieceIcons = new ArrayList<>();
+    private ImageView lineImageView;
 
     public PentagonBoardView(GameConfig config, GameModel model, GameController controller) {
         super(config, model, controller);
-        addCommonButtons();
-        }
-
+        initialize(); // AbstractBoardView의 버튼 및 아이콘 구성
+    }
 
     @Override
     protected void buildBoard() {
-        setLayout(null);
-        int bs = windowSizeX / 20;
-        ImageIcon lineIcon = new ImageIcon(getClass().getResource("/yutgame/img/line_pen.png"));
-        ImageIcon startIcon = new ImageIcon(getClass().getResource("/yutgame/img/startcircle.jpg"));
-        ImageIcon bigCircleIcon = new ImageIcon(getClass().getResource("/yutgame/img/bigcircle.jpg"));
-        ImageIcon circleIcon = new ImageIcon(getClass().getResource("/yutgame/img/circle.jpg"));
+        double bs = windowSizeX / 20.0;
+        Image lineImg = new Image(getClass().getResource("/yutgame/img/line_pen.png").toExternalForm());
+        Image circle = new Image(getClass().getResource("/yutgame/img/circle.jpg").toExternalForm());
+        Image bigCircle = new Image(getClass().getResource("/yutgame/img/bigcircle.jpg").toExternalForm());
+        Image startCircle = new Image(getClass().getResource("/yutgame/img/startcircle.jpg").toExternalForm());
 
-        int imgX = windowSizeX / 2 - lineIcon.getIconWidth() / 2 - 260;
-        int imgY = windowSizeY / 2 - lineIcon.getIconHeight() / 2 - 130;
-        int cx = imgX + lineIcon.getIconWidth() / 2;
-        int cy = imgY + lineIcon.getIconHeight() / 2;
-        int radius = bs * 42 / 10;
+        double imgX = windowSizeX / 2.0 - lineImg.getWidth() / 2 - 260;
+        double imgY = windowSizeY / 2.0 - lineImg.getHeight() / 2 - 130;
+        double cx = imgX + lineImg.getWidth() / 2;
+        double cy = imgY + lineImg.getHeight() / 2;
+        double radius = bs * 4.2;
 
-        List<Point> outerVertices = new ArrayList<>();
+        List<Point2D> outerVertices = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             double angle = Math.toRadians(306 + i * 72);
-            int x = (int) (cx + radius * Math.cos(angle));
-            int y = (int) (cy - radius * Math.sin(angle)) + 20;
-            outerVertices.add(new Point(x, y));
+            double x = cx + radius * Math.cos(angle);
+            double y = cy - radius * Math.sin(angle) + 20;
+            outerVertices.add(new Point2D(x, y));
         }
 
         int cellId = 0;
-        // 외곽 셀 0~24
         for (int i = 0; i < 5; i++) {
-            Point from = outerVertices.get(i);
-            Point to = outerVertices.get((i + 1) % 5);
+            Point2D from = outerVertices.get(i);
+            Point2D to = outerVertices.get((i + 1) % 5);
             for (int j = 0; j < 5; j++) {
                 double ratio = j / 5.0;
-                int x = (int)(from.x * (1 - ratio) + to.x * ratio);
-                int y = (int)(from.y * (1 - ratio) + to.y * ratio);
-                JButton btn = new JButton((j == 0 && i == 0) ? startIcon : (j == 0) ? bigCircleIcon : circleIcon);
-                btn.setBounds(x - bs / 2, y - bs / 2, bs, bs);
-                btn.setContentAreaFilled(false);
-                btn.setBorderPainted(false);
-                btn.setFocusPainted(false);
-                btn.setOpaque(false);
-                add(btn);
-                cellIdToPosition.put(cellId++, new Point(x, y));
+                double x = from.getX() * (1 - ratio) + to.getX() * ratio;
+                double y = from.getY() * (1 - ratio) + to.getY() * ratio;
+
+                Image img = (j == 0 && i == 0) ? startCircle : (j == 0) ? bigCircle : circle;
+                ImageView iv = new ImageView(img);
+                iv.setFitWidth(bs);
+                iv.setFitHeight(bs);
+                iv.setLayoutX(x - bs / 2);
+                iv.setLayoutY(y - bs / 2);
+
+                getChildren().add(iv);
+                cellIdToPosition.put(cellId++, new Point2D(x, y));
             }
         }
-        
-        Point startPos = cellIdToPosition.get(0);
-        if (startPos != null) {
-            cellIdToPosition.put(25, new Point(startPos));
-        }
+
+        cellIdToPosition.put(25, cellIdToPosition.get(0));
 
         // 중앙 셀 (32)
-        JButton centerBtn = new JButton(bigCircleIcon);
-        centerBtn.setBounds(cx - bs / 2 + 2, cy - bs / 2 + 20, bs, bs);
-        centerBtn.setContentAreaFilled(false);
-        centerBtn.setBorderPainted(false);
-        centerBtn.setFocusPainted(false);
-        centerBtn.setOpaque(false);
-        add(centerBtn);
-        cellIdToPosition.put(32, new Point(cx, cy+ 20));
+        ImageView center = new ImageView(bigCircle);
+        center.setFitWidth(bs);
+        center.setFitHeight(bs);
+        center.setLayoutX(cx - bs / 2 + 2);
+        center.setLayoutY(cy - bs / 2 + 20);
+        getChildren().add(center);
+        cellIdToPosition.put(32, new Point2D(cx, cy + 20));
 
-        int[] diagIds = {34, 33, 26, 27, 28, 29, 30, 31, 36, 35};  // 원하는 순서대로
+        // 대각선 셀
+        int[] diagIds = {34, 33, 26, 27, 28, 29, 30, 31, 36, 35};
         int diagIndex = 0;
         for (int i = 0; i < 5; i++) {
-            Point from = outerVertices.get(i);
+            Point2D from = outerVertices.get(i);
             for (int j = 1; j <= 2; j++) {
-                int id = diagIds[diagIndex++]; 
-
+                int id = diagIds[diagIndex++];
                 double r = j / 3.0;
-                int x = (int)(from.x * (1 - r) + cx * r);
-                int y = (int)(from.y * (1 - r) + cy * r);
+                double x = from.getX() * (1 - r) + cx * r;
+                double y = from.getY() * (1 - r) + cy * r;
 
-                JButton btn = new JButton(circleIcon);
-                btn.setBounds(x - bs / 2, y - bs / 2, bs, bs);
-                btn.setContentAreaFilled(false);
-                btn.setBorderPainted(false);
-                btn.setFocusPainted(false);
-                btn.setOpaque(false);
-                add(btn);
-                cellIdToPosition.put(id, new Point(x, y));
+                ImageView diag = new ImageView(circle);
+                diag.setFitWidth(bs);
+                diag.setFitHeight(bs);
+                diag.setLayoutX(x - bs / 2);
+                diag.setLayoutY(y - bs / 2);
+
+                getChildren().add(diag);
+                cellIdToPosition.put(id, new Point2D(x, y));
             }
         }
 
-        lineLabel = new JLabel(lineIcon);
-        lineLabel.setBounds(imgX, imgY, lineIcon.getIconWidth(), lineIcon.getIconHeight());
-        add(lineLabel, 0);
-        setComponentZOrder(lineLabel, getComponentCount() - 1);
+        // 선 이미지 맨 뒤로
+        lineImageView = new ImageView(lineImg);
+        lineImageView.setLayoutX(imgX);
+        lineImageView.setLayoutY(imgY);
+        getChildren().add(0, lineImageView);
+
         updatePieceIcons();
-        repaint();
     }
 
     @Override
     public void updatePieceIcons() {
-        for (JLabel label : pieceIconLabels) {
-            remove(label);
-        }
-        pieceIconLabels.clear();
+        getChildren().removeAll(pieceIcons);
+        pieceIcons.clear();
 
         List<Player> players = model.getPlayers();
-        String[] colorNames = { "blue", "green", "red", "yellow" };
-        Set<Integer> drawnCellIds = new HashSet<>();
+        String[] colors = { "blue", "green", "red", "yellow" };
+        Set<Integer> drawn = new HashSet<>();
 
-        for (int playerIndex = 0; playerIndex < players.size(); playerIndex++) {
-            Player player = players.get(playerIndex);
-            String color = colorNames[playerIndex % colorNames.length];
+        for (int pIdx = 0; pIdx < players.size(); pIdx++) {
+            Player player = players.get(pIdx);
+            String color = colors[pIdx % colors.length];
 
             for (Piece piece : player.getPieces()) {
                 Piece leader = piece.isLeader() ? piece : piece.getLeader();
                 if (leader == null || leader.getPosition() == null) continue;
 
-                int cellId = leader.getPosition().getId();
-                if (cellId == 0 || drawnCellIds.contains(cellId)) continue;
-                drawnCellIds.add(cellId);
+                int id = leader.getPosition().getId();
+                if (id == 0 || drawn.contains(id)) continue;
+                drawn.add(id);
 
-                Point pos = cellIdToPosition.get(cellId);
+                Point2D pos = cellIdToPosition.get(id);
                 if (pos == null) continue;
 
-                int stackSize = Math.min(leader.getStackSize(), 5);
-                String imagePath = String.format("/yutgame/img/big%s%d.jpg", color, stackSize);
-                ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
-
-                JLabel iconLabel = new JLabel(icon);
-                iconLabel.setBounds(pos.x - 15, pos.y - 15, 30, 30);
+                int stack = Math.min(leader.getStackSize(), 5);
+                String imgPath = String.format("/yutgame/img/big%s%d.jpg", color, stack);
+                ImageView icon = new ImageView(new Image(getClass().getResource(imgPath).toExternalForm()));
+                icon.setFitWidth(30);
+                icon.setFitHeight(30);
+                icon.setLayoutX(pos.getX() - 15);
+                icon.setLayoutY(pos.getY() - 15);
 
                 if (selectedPiece != null) {
                     Piece selectedLeader = selectedPiece.isLeader() ? selectedPiece : selectedPiece.getLeader();
-                    if (selectedLeader != null &&
-                        selectedLeader.getPosition() != null &&
-                        selectedLeader.getPosition().getId() == cellId) {
-                        iconLabel.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 128), 3));
+                    if (selectedLeader != null && selectedLeader.getPosition() != null &&
+                        selectedLeader.getPosition().getId() == id &&
+                        player.getPieces().contains(selectedLeader)) {
+                        icon.setStyle("-fx-effect: dropshadow(gaussian, purple, 10, 0.5, 0, 0);");
                     }
                 }
 
-                add(iconLabel);
-                setComponentZOrder(iconLabel, 0);
-                pieceIconLabels.add(iconLabel);
+                getChildren().add(icon);
+                pieceIcons.add(icon);
             }
         }
 
-        setComponentZOrder(lineLabel, getComponentCount() - 1);
-        repaint();
+        getChildren().remove(lineImageView);
+        getChildren().add(0, lineImageView); // 항상 맨 뒤로
     }
 }

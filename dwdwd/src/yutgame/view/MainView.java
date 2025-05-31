@@ -1,48 +1,57 @@
 package yutgame.view;
 
-import yutgame.model.GameModel;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import yutgame.controller.SettingController;
 
-import javax.swing.*;
-import java.awt.*;
+import java.util.Optional;
 
-public class MainView extends JFrame {
+public class MainView extends BorderPane {
     private TurnView turnView;
     private AbstractBoardView boardView;
     private YutResultView yutResultView;
+    private final Stage stage;
 
     public MainView(AbstractBoardView boardView) {
-        super("Yut Play");
         this.boardView = boardView;
+        this.stage = new Stage(); // 새 창 생성
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(null);               // 절대좌표
-        setResizable(false);           // 크기 고정
+        // ── 중앙 보드 영역 ─────────────────────────────
+        StackPane boardPane = new StackPane();
+        boardPane.getChildren().add(boardView);
+        boardPane.setPadding(new Insets(10));
+        boardPane.setPrefSize(950, 700);
 
-        // ── 보드 영역 ───────────────────────────────
-        boardView.setBounds(10, 10, 950, 700);
-        add(boardView);
-
-        // TurnView: 보드 위에 배치
+        // ── TurnView: 보드 위 오른쪽 위에 배치 ─────────────
         turnView = new TurnView();
-        turnView.setBounds(500, 10, 235, 80);
-        boardView.add(turnView);
+        StackPane.setMargin(turnView, new Insets(0, 0, 600, 450));
+        boardPane.getChildren().add(turnView);
 
-        // ── 오른쪽 패널 (결과창 전용) ─────────────────
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setBounds(970, 10, 200, 700); 
-        rightPanel.setBackground(new Color(245, 245, 245));
-        rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // ── 오른쪽 결과창 영역 ─────────────────────────
+        VBox rightPanel = new VBox();
+        rightPanel.setPrefWidth(200);
+        rightPanel.setPadding(new Insets(10));
+        rightPanel.setSpacing(10);
+        rightPanel.setStyle("-fx-background-color: #f5f5f5;");
 
-        // YutResultView: 패널 전체를 채움
         yutResultView = new YutResultView();
-        rightPanel.add(yutResultView, BorderLayout.CENTER);
+        VBox.setVgrow(yutResultView, Priority.ALWAYS);
+        rightPanel.getChildren().add(yutResultView);
 
-        add(rightPanel);
+        // ── 전체 배치 ───────────────────────────────
+        setLeft(boardPane);
+        setRight(rightPanel);
 
-        // ── 전체 창 크기 ─────────────────────────────
-        setSize(1180, 750);
-        setLocationRelativeTo(null);
+        // ── Scene 및 Stage 구성 ─────────────────────
+        Scene scene = new Scene(this, 1180, 750);
+        stage.setTitle("Yut Play");
+        stage.setScene(scene);
+        stage.setResizable(false);
     }
 
     public TurnView getTurnView() {
@@ -56,21 +65,26 @@ public class MainView extends JFrame {
     public YutResultView getYutResultView() {
         return yutResultView;
     }
-    
-    public void handleWinCondition(String winnerName) {
-        int choice = JOptionPane.showConfirmDialog(
-                this,
-                winnerName + "님이 승리했습니다!\n 다시 시작하시겠습니까?",
-                "Game Over",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.INFORMATION_MESSAGE
-        );
 
-        if (choice == JOptionPane.YES_OPTION) {
-            this.dispose();
-            SwingUtilities.invokeLater(() -> new SettingController());
+    public void show() {
+        stage.show();
+        stage.centerOnScreen();
+    }
+
+    public void handleWinCondition(String winnerName) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(null);
+        alert.setContentText(winnerName + "님이 승리했습니다!\n다시 시작하시겠습니까?");
+        alert.initOwner(stage);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            stage.close();
+            Platform.runLater(() -> new SettingController(new Stage()));
         } else {
-            System.exit(0);
+            Platform.exit();
         }
     }
 }

@@ -1,41 +1,48 @@
 package yutgame.view;
 
-import javax.swing.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.geometry.Insets;
 
-import yutgame.model.YutThrowResult;
+public class YutResultView extends VBox {
 
-import java.awt.*;
-
-public class YutResultView extends JPanel {
-    private final JTextArea resultArea;
+    private final TextArea resultArea;
     private final StringBuilder history;
 
     public YutResultView() {
-        setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 245));
-        setBorder(BorderFactory.createTitledBorder("🎲 게임 결과")); // 테두리 + 제목
+        setPrefSize(300, 300);
+        setPadding(new Insets(10));
 
-        resultArea = new JTextArea();
-        resultArea.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        // 배경색 설정
+        setBackground(new Background(
+            new BackgroundFill(Color.rgb(240,240,240),
+            CornerRadii.EMPTY, Insets.EMPTY)));
+
+        // 결과 텍스트 영역
+        resultArea = new TextArea("결과:\n");
+        resultArea.setStyle(
+            "-fx-font-family: 'SansSerif';" +
+            "-fx-font-weight: bold;" +
+            "-fx-font-size: 18px;");
         resultArea.setEditable(false);
-        resultArea.setLineWrap(true);
-        resultArea.setWrapStyleWord(true);
-        resultArea.setMargin(new Insets(10, 10, 10, 10));
+        resultArea.setWrapText(true);
+        resultArea.setPrefHeight(280);
 
-        JScrollPane scroll = new JScrollPane(resultArea);
-        scroll.setBorder(null);
-
-        add(scroll, BorderLayout.CENTER);
+        getChildren().add(resultArea);
         history = new StringBuilder();
     }
 
     public void setResult(String resultText) {
         history.append(resultText).append("\n");
-        resultArea.setText(history.toString());
+        resultArea.setText("결과:\n" + history);
     }
 
     public void clearResults() {
         history.setLength(0);
-        resultArea.setText("");
+        resultArea.setText("결과:\n");
     }
 }

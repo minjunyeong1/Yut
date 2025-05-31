@@ -1,5 +1,6 @@
 package yutgame.controller;
 
+import javafx.stage.Stage;
 import yutgame.model.*;
 import yutgame.view.*;
 
@@ -9,18 +10,17 @@ import yutgame.view.*;
 public class SettingController {
     private SettingView settingView;
 
-    public SettingController() {
+    public SettingController(Stage primaryStage) {
         settingView = new SettingView();
-        settingView.addStartListener(e -> onStart());
-        settingView.setVisible(true);
+        settingView.addStartListener(() -> onStart(primaryStage));
     }
 
-    private void onStart() {
+    private void onStart(Stage stageToClose) {
         int players = settingView.getPlayerCount();
         int pieces  = settingView.getPiecesPerPlayer();
         Board.Shape shape = settingView.getSelectedShape();
 
-        settingView.dispose();
+        stageToClose.close();
 
         GameConfig config = new GameConfig(players, pieces, shape);
         GameModel model   = new GameModel(config);
@@ -42,6 +42,6 @@ public class SettingController {
         GameController gc = new GameController(model, view);
         boardView.setGameController(gc);
 
-        view.setVisible(true);
+        view.show();
     }
 }

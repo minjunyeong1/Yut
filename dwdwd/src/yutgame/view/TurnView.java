@@ -1,39 +1,49 @@
 package yutgame.view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
-import java.util.ArrayList;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.geometry.Point2D;
 
-public class TurnView extends JPanel {
-    private JLabel turnArrowLabel;
-    private List<Point> playerIconPositions;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TurnView extends Pane {
+
+    private ImageView turnArrowImageView;
+    private List<Point2D> playerIconPositions;
 
     public TurnView() {
-        setLayout(null);
-        setOpaque(false);
-        
-        ImageIcon arrowIcon = new ImageIcon(getClass().getResource("/yutgame/img/player_turn.png"));
-        turnArrowLabel = new JLabel(arrowIcon);
-        add(turnArrowLabel);
+        setPrefSize(200, 100);
 
+        // 화살표 이미지 로딩
+        Image arrowImage = new Image(getClass()
+            .getResource("/yutgame/img/player_turn.png")
+            .toExternalForm());
+        turnArrowImageView = new ImageView(arrowImage);
+        getChildren().add(turnArrowImageView);
+
+        // 플레이어 아이콘 상대 위치 리스트
         playerIconPositions = new ArrayList<>();
-        playerIconPositions.add(new Point(-15, -3)); // 파랑
-        playerIconPositions.add(new Point(45, -3)); // 초록
-        playerIconPositions.add(new Point(105, -3)); // 빨강
-        playerIconPositions.add(new Point(165, -3)); // 노랑
+        playerIconPositions.add(new Point2D(35, 7));   // 파랑
+        playerIconPositions.add(new Point2D(95, 7));    // 초록
+        playerIconPositions.add(new Point2D(155, 7));   // 빨강
+        playerIconPositions.add(new Point2D(215, 7));   // 노랑
 
-        Point p = playerIconPositions.get(0);
-        turnArrowLabel.setBounds(p.x, p.y, arrowIcon.getIconWidth(), arrowIcon.getIconHeight());
+        // 초기 위치 설정 (첫 번째 플레이어)
+        Point2D p = playerIconPositions.get(0);
+        turnArrowImageView.setLayoutX(p.getX());
+        turnArrowImageView.setLayoutY(p.getY());
     }
 
+    /**
+     * @param turnIndex 0=파랑, 1=초록, 2=빨강, 3=노랑
+     */
     public void updateTurn(int turnIndex) {
-        if (turnIndex >= 0) {
-            Point p = playerIconPositions.get(turnIndex);
-            turnArrowLabel.setLocation(p.x, p.y); // 아이콘 위쪽에 배치
-            repaint();
+        if (turnIndex >= 0 && turnIndex < playerIconPositions.size()) {
+            Point2D p = playerIconPositions.get(turnIndex);
+            turnArrowImageView.setLayoutX(p.getX());
+            turnArrowImageView.setLayoutY(p.getY());
         }
     }
 }
-
-
