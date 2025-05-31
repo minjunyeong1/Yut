@@ -11,6 +11,7 @@ public class Player {
     private String name;
     private List<Piece> pieces = new ArrayList<>();
     private List<YutThrowResult> yutHistory = new ArrayList<>();
+    private boolean lastisYutMo = false;
     private boolean canAddResult = true;
 
     public Player(GameModel model,String name, int pieceCount, Cell startCell) {
@@ -26,10 +27,13 @@ public class Player {
             return false;            
         }
         
-        yutHistory.add(result);      
+        yutHistory.add(result);
+        
+        if(result == YutThrowResult.YUT || result == YutThrowResult.MO) {lastisYutMo = true;}
         
         if (result != YutThrowResult.YUT && result != YutThrowResult.MO) {
             canAddResult = false;
+            lastisYutMo = false;
         }
         
         return true;                 
@@ -64,5 +68,7 @@ public class Player {
 	public boolean canAddResult() {
 		return canAddResult;
 	}
-
+	public boolean getlastisYutMo() {
+		return lastisYutMo;
+	}
 }

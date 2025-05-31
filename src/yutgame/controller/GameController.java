@@ -30,10 +30,10 @@ public class GameController {
     private void setupEventHandlers() {
         AbstractBoardView boardView = view.getBoardView();
 
-        // 랜덤 던지기 버튼
+        // 🔁 랜덤 던지기 버튼
         boardView.getThrowYutButton().setOnAction(e -> yutThrowController.throwYut());
 
-        // 수동 윷 버튼들
+        // 🔁 수동 윷 버튼들
         boardView.getYutChoiceButtons().forEach((name, btn) -> {
             YutThrowResult r = YutThrowResult.valueOf(name);
             btn.setOnAction(e -> yutThrowController.handleManualThrow(r));
@@ -98,8 +98,8 @@ public class GameController {
             }
 
             if (model.getCurrentPlayer().getYutHistory().isEmpty()) {
-                boolean yutMo = result == YutThrowResult.YUT || result == YutThrowResult.MO;
-                boolean extraTurn = turnHadCapture || yutMo;
+            	boolean yutMo = model.getCurrentPlayer().getlastisYutMo();
+                boolean extraTurn = turnHadCapture || yutMo; // ✅ 잡았거나 윷/모인 경우 추가 턴
                 if (extraTurn) {
                     model.getCurrentPlayer().setCanAddResult(true);
                 } else {
