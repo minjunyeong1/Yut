@@ -41,6 +41,16 @@ public class YutThrowController {
         if (yutThrowCallback != null) {
             yutThrowCallback.accept(result); // View에 결과 전달
         }
+        boolean hasOnlyBackdo = model.getCurrentPlayer().getYutHistory().size() == 1 &&
+                model.getCurrentPlayer().getYutHistory().get(0).getValue() == -1;
+
+        boolean allAtStartCell = model.getCurrentPlayer().getPieces().stream()
+                .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
+
+        if (hasOnlyBackdo && allAtStartCell) {
+            	model.getCurrentPlayer().getYutHistory().remove(result);
+                if (backdoSkipCallback != null) backdoSkipCallback.run();  //  턴 넘김 요청
+            }
     }
 
     /**
