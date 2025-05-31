@@ -30,10 +30,10 @@ public class GameController {
     private void setupEventHandlers() {
         AbstractBoardView boardView = view.getBoardView();
 
-        // 🔁 랜덤 던지기 버튼
+        // 랜덤 던지기 버튼
         boardView.getThrowYutButton().setOnAction(e -> yutThrowController.throwYut());
 
-        // 🔁 수동 윷 버튼들
+        // 수동 윷 버튼들
         boardView.getYutChoiceButtons().forEach((name, btn) -> {
             YutThrowResult r = YutThrowResult.valueOf(name);
             btn.setOnAction(e -> yutThrowController.handleManualThrow(r));

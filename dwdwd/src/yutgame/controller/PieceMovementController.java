@@ -16,6 +16,6 @@ public class PieceMovementController {
             case MO:     steps = 5;  break;
             default:     steps = 0;
         }
-        return piece.move(steps);  // ✅ 잡힌 말들 반환
+        return piece.move(steps);
     }
 }

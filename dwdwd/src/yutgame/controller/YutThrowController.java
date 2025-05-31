@@ -22,7 +22,7 @@ public class YutThrowController {
 
     /**
      * 윷 던지기 버튼 클릭 시 호출될 콜백 함수를 설정
-     * @param callback 윷 던지기 결과를 처리할 콜백 함수
+     *callback 윷 던지기 결과를 처리할 콜백 함수
      */
     public void setYutThrowCallback(Consumer<YutThrowResult> callback) {
         this.yutThrowCallback = callback;
@@ -75,7 +75,7 @@ public class YutThrowController {
 
         if (hasOnlyBackdo && allAtStartCell) {
         	model.getCurrentPlayer().getYutHistory().remove(result);
-            if (backdoSkipCallback != null) backdoSkipCallback.run();  // ✅ 턴 넘김 요청
+            if (backdoSkipCallback != null) backdoSkipCallback.run(); 
         }
     }
 }
