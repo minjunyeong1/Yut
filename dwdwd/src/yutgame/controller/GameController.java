@@ -20,13 +20,13 @@ public class GameController {
         this.model = model;
         this.view  = view;
 
-        /* ① 먼저 “순수” 윷 컨트롤러를 만든다 */
+        /*  먼저 “순수” 윷 컨트롤러를 만든다 */
         this.yutThrowController = new YutThrowController(model);
         
-        // ✅ 여기서 백도 스킵 턴 콜백 연결
+        //  여기서 백도 스킵 턴 콜백 연결
         this.yutThrowController.setBackdoSkipCallback(this::nextTurn);
 
-        /* ② 그리고 UI-배선을 건다 */
+        /* 그리고 UI-배선을 건다 */
         setupEventHandlers();
         setupResultButtonHandler();
 
@@ -127,6 +127,24 @@ public class GameController {
                 turnHadCapture = false; // 턴 종료 시 초기화
                 view.getBoardView().clearSelectedPiece();
             }
+            
+            Player current = model.getCurrentPlayer();
+            List<YutThrowResult> history = current.getYutHistory();
+
+            boolean hasOnlyBackdo = history.size() == 1 && history.get(0).getValue() == -1;
+            boolean allAtStartOrFinished = current.getPieces().stream()
+            	    .allMatch(p ->
+            	        p.getPosition() == null || p.getPosition().getId() == 0
+            	    );
+            boolean yutMo = current.getlastisYutMo();
+            boolean extraTurn = turnHadCapture || yutMo;
+
+            if (hasOnlyBackdo && allAtStartOrFinished && !extraTurn) {
+                current.clearYutHistory();
+                view.getBoardView().removeResultButton(YutThrowResult.BACKDO);
+                view.getBoardView().clearSelectedPiece();
+                nextTurn();
+            } 
         });
     }
     
