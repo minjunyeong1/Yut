@@ -32,5 +32,3 @@ public enum YutThrowResult {
         return display;
     }
 }
-
-

@@ -26,9 +26,9 @@ public class TurnView extends Pane {
         // 플레이어 아이콘 상대 위치 리스트
         playerIconPositions = new ArrayList<>();
         playerIconPositions.add(new Point2D(35, 7));   // 파랑
-        playerIconPositions.add(new Point2D(95, 7));    // 초록
-        playerIconPositions.add(new Point2D(155, 7));   // 빨강
-        playerIconPositions.add(new Point2D(215, 7));   // 노랑
+        playerIconPositions.add(new Point2D(95, 7));   // 초록
+        playerIconPositions.add(new Point2D(155, 7));  // 빨강
+        playerIconPositions.add(new Point2D(215, 7));  // 노랑
 
         // 초기 위치 설정 (첫 번째 플레이어)
         Point2D p = playerIconPositions.get(0);
