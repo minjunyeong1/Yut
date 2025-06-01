@@ -108,6 +108,24 @@ public class GameController {
                 turnHadCapture = false;
                 view.getBoardView().clearSelectedPiece();
             }
+            
+            Player current = model.getCurrentPlayer();
+            List<YutThrowResult> history = current.getYutHistory();
+
+            boolean hasOnlyBackdo = history.size() == 1 && history.get(0).getValue() == -1;
+            boolean allAtStartOrFinished = current.getPieces().stream()
+            	    .allMatch(p ->
+            	        p.getPosition() == null || p.getPosition().getId() == 0
+            	    );
+            boolean yutMo = current.getlastisYutMo();
+            boolean extraTurn = turnHadCapture || yutMo;
+
+            if (hasOnlyBackdo && allAtStartOrFinished && !extraTurn) {
+                current.clearYutHistory();
+                view.getBoardView().removeResultButton(YutThrowResult.BACKDO);
+                view.getBoardView().clearSelectedPiece();
+                nextTurn();
+            }
         });
     }
 
