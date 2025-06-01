@@ -92,6 +92,8 @@ public class GameController {
             
             // 기본 말 이동
             List<Piece> captured = new PieceMovementController().movePiece(moveTarget, result);
+            long finishedPieceCount = model.getFinishedPieceCountofCurrentPlayer();
+            
 
             // 3. 말 잡기 발생하면 플래그 설정
             if (!captured.isEmpty()) {
