@@ -66,15 +66,6 @@ public class GameController {
 
             int steps = result.getValue();
 
-            if (steps == -1 && moveTarget.getPosition().getId() == 0) {
-                boolean allAtStart = model.getCurrentPlayer().getPieces().stream()
-                        .allMatch(p -> p.getPosition() != null && p.getPosition().getId() == 0);
-                if (allAtStart) {
-                    model.getCurrentPlayer().getYutHistory().remove(result);
-                    nextTurn();
-                    return;
-                }
-            }
 
             if (steps == -1 && moveTarget.getPosition().getId() == 1) {
                 Cell last = model.getBoard().getLastCell();
