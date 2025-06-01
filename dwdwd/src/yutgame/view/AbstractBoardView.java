@@ -30,6 +30,7 @@ public abstract class AbstractBoardView extends JPanel {
     protected Piece selectedPiece = null;
     protected Map<String, JButton> resultButtons = new HashMap<>();
     private Consumer<YutThrowResult> resultSelectionListener;
+    private final JLabel[] pieceStatusLabels = new JLabel[4];
 
     protected JButton throwYutButton;
     protected JButton deployPieceButton;
@@ -54,8 +55,32 @@ public abstract class AbstractBoardView extends JPanel {
         super.addNotify();
         buildBoard();
         addCommonButtons();
+        addPlayerIcons();
     }
 
+    public void initPieceStatusLabelsView(int playerCount, int piecesPerPlayer) {
+        for (int i = 0; i < 4; i++) {
+            if (pieceStatusLabels[i] == null) {
+                pieceStatusLabels[i] = new JLabel();
+                pieceStatusLabels[i].setBounds(20, 500 + i * 25, 100, 20);
+                pieceStatusLabels[i].setFont(new Font("Arial", Font.PLAIN, 14));
+                this.add(pieceStatusLabels[i]);
+            }
+
+            if (i < playerCount) {
+                pieceStatusLabels[i].setText("P" + (i + 1) + " 0/" + piecesPerPlayer);
+            } else {
+                pieceStatusLabels[i].setText("P" + (i + 1) + " 0/0");
+            }
+        }
+    }
+
+    public void showFinishedPieceCount(int playerIndex, long finishedPieceCount, int piecesPerPlayer) {   	
+        if (playerIndex >= 0 && playerIndex < pieceStatusLabels.length) {
+            pieceStatusLabels[playerIndex].setText("P" + (playerIndex + 1) + " " + finishedPieceCount + "/" + piecesPerPlayer);
+        }
+    }
+    
     private void addPlayerIcons() {
         String[] colors = { "blue", "green", "red", "yellow" };
         int startX = 500;
@@ -75,8 +100,6 @@ public abstract class AbstractBoardView extends JPanel {
         throwYutButton = new JButton("윷 던지기");
         throwYutButton.setBounds(windowSizeX - 180, 50, 120, 40);
         add(throwYutButton);
-
-        addPlayerIcons();
 
         String[] labels = {"빽도", "도", "개", "걸", "윷", "모"};
         YutThrowResult[] results = {
@@ -215,5 +238,4 @@ public abstract class AbstractBoardView extends JPanel {
     public void setGameController(GameController controller) {
         this.gameController = controller;
     }
-
 }

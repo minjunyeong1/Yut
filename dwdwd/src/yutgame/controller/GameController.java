@@ -15,7 +15,7 @@ public class GameController {
     private final YutThrowController yutThrowController;
     boolean stillCanAdd = true; // 텍스트 로그 중복 방지용 플래그
     private boolean turnHadCapture = false; // 이번 턴 중 말 잡은 적 있는지 여부
-
+    
     public GameController(GameModel model, MainView view) {
         this.model = model;
         this.view  = view;
@@ -29,11 +29,18 @@ public class GameController {
         /* 그리고 UI-배선을 건다 */
         setupEventHandlers();
         setupResultButtonHandler();
-
+        initPieceStatusLabels();
         updateTurnUI();
     }
 
-    /** 버튼 이벤트 핸들러 등록 */
+    private void initPieceStatusLabels() {
+    	int playerCount = model.getPlayers().size();
+        int piecesPerPlayer = model.getPlayers().get(0).getPieces().size(); // 모두 동일하다고 가정
+        view.getBoardView().initPieceStatusLabelsView(playerCount, piecesPerPlayer);
+		
+	}
+
+	/** 버튼 이벤트 핸들러 등록 */
     private void setupEventHandlers() {
         AbstractBoardView boardView = view.getBoardView();
 
@@ -93,6 +100,8 @@ public class GameController {
             // 기본 말 이동
             List<Piece> captured = new PieceMovementController().movePiece(moveTarget, result);
             long finishedPieceCount = model.getFinishedPieceCountofCurrentPlayer();
+            int piecesPerPlayer = model.getPlayers().get(0).getPieces().size();
+            view.getBoardView().showFinishedPieceCount(model.getCurrentPlayerIndex(), finishedPieceCount,piecesPerPlayer);
             
 
             // 3. 말 잡기 발생하면 플래그 설정
