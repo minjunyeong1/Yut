@@ -71,4 +71,9 @@ public class Player {
 	public boolean getlastisYutMo() {
 		return lastisYutMo;
 	}
+	public long getFinishedPieceCount() {
+		// position == null: 완주한 말
+		return pieces.stream().filter(Piece::isFinished).count();
+	}
+	
 }
