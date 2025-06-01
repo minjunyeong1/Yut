@@ -5,6 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 import yutgame.controller.GameController;
 import yutgame.model.*;
 
@@ -29,7 +32,9 @@ public abstract class AbstractBoardView extends Pane {
     protected Button throwYutButton;
     protected Button deployPieceButton;
     protected Button nextTurnButton;
-
+    
+    private final Label[] pieceStatusLabels = new Label[4];
+    
     public AbstractBoardView(GameConfig config, GameModel model, GameController controller) {
         this.config = config;
         this.model = model;
@@ -47,6 +52,35 @@ public abstract class AbstractBoardView extends Pane {
         addCommonButtons();
     }
 
+    
+
+    public void initPieceStatusLabelsView(int playerCount, int piecesPerPlayer) {
+        for (int i = 0; i < 4; i++) {
+            if (pieceStatusLabels[i] == null) {
+                pieceStatusLabels[i] = new Label();
+                pieceStatusLabels[i].setLayoutX(20);              // X 위치 고정
+                pieceStatusLabels[i].setLayoutY(500 + i * 25);    // 아래로 일정 간격
+                pieceStatusLabels[i].setFont(Font.font("Arial", 14));
+                this.getChildren().add(pieceStatusLabels[i]);     // this는 Pane
+            }
+
+            if (i < playerCount) {
+                pieceStatusLabels[i].setText("P" + (i + 1) + " 0/" + piecesPerPlayer);
+            } else {
+                pieceStatusLabels[i].setText("P" + (i + 1) + " 0/0");
+            }
+        }
+    }
+    
+    public void showFinishedPieceCount(int playerIndex, long finishedPieceCount, int piecesPerPlayer) {
+        if (playerIndex >= 0 && playerIndex < pieceStatusLabels.length) {
+            pieceStatusLabels[playerIndex].setText(
+                "P" + (playerIndex + 1) + " " + finishedPieceCount + "/" + piecesPerPlayer
+            );
+        }
+    }
+    
+   
     /**
      * 플레이어 아이콘(원 모양) 4개를 보드 상단에 추가하는 메서드
      */

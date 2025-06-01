@@ -23,17 +23,25 @@ public class GameController {
 
         setupEventHandlers();
         setupResultButtonHandler();
-
+        initPieceStatusLabels();
         updateTurnUI();
     }
+    
+    private void initPieceStatusLabels() {
+    	int playerCount = model.getPlayers().size();
+        int piecesPerPlayer = model.getPlayers().get(0).getPieces().size(); // 모두 동일하다고 가정
+        view.getBoardView().initPieceStatusLabelsView(playerCount, piecesPerPlayer);
+		
+	}
+
 
     private void setupEventHandlers() {
         AbstractBoardView boardView = view.getBoardView();
 
-        // 🔁 랜덤 던지기 버튼
+        //  랜덤 던지기 버튼
         boardView.getThrowYutButton().setOnAction(e -> yutThrowController.throwYut());
 
-        // 🔁 수동 윷 버튼들
+        //  수동 윷 버튼들
         boardView.getYutChoiceButtons().forEach((name, btn) -> {
             YutThrowResult r = YutThrowResult.valueOf(name);
             btn.setOnAction(e -> yutThrowController.handleManualThrow(r));
@@ -79,7 +87,12 @@ public class GameController {
             }
 
             List<Piece> captured = new PieceMovementController().movePiece(moveTarget, result);
+            long finishedPieceCount = model.getFinishedPieceCountofCurrentPlayer();
+            int piecesPerPlayer = model.getPlayers().get(0).getPieces().size();
+            view.getBoardView().showFinishedPieceCount(model.getCurrentPlayerIndex(), finishedPieceCount,piecesPerPlayer);
 
+            
+            
             if (!captured.isEmpty()) {
                 turnHadCapture = true;
                 stillCanAdd = true;
