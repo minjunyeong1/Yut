@@ -73,4 +73,9 @@ public class GameModel {
     public Cell getLastCell() {
         return board.getLastCell();
     }
+
+    // 현재 플레이어의 완주한 말의 개수
+    public long getFinishedPieceCountofCurrentPlayer() {
+    	return getCurrentPlayer().getFinishedPieceCount();
+    }
 }
