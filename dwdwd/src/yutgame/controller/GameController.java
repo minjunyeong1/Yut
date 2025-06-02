@@ -96,7 +96,7 @@ public class GameController {
             view.getBoardView().updatePieceIcons();
 
             if (model.isCurrentPlayerWinner()) {
-            	String winner = model.getCurrentPlayer().getName();
+            	int winner = model.getCurrentPlayerIndex();
                 view.handleWinCondition(winner);
                 return;
             }

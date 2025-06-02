@@ -71,11 +71,11 @@ public class MainView extends BorderPane {
         stage.centerOnScreen();
     }
 
-    public void handleWinCondition(String winnerName) {
+    public void handleWinCondition(int winner) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText(null);
-        alert.setContentText(winnerName + "님이 승리했습니다!\n다시 시작하시겠습니까?");
+        alert.setContentText("P"+(winner + 1) + "님이 승리했습니다!\n다시 시작하시겠습니까?");
         alert.initOwner(stage);
 
         Optional<ButtonType> result = alert.showAndWait();
