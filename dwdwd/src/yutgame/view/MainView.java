@@ -57,10 +57,10 @@ public class MainView extends JFrame {
         return yutResultView;
     }
     
-    public void handleWinCondition(String winnerName) {
+    public void handleWinCondition(int winner) {
         int choice = JOptionPane.showConfirmDialog(
                 this,
-                winnerName + "님이 승리했습니다!\n 다시 시작하시겠습니까?",
+                "P" + (winner + 1) + "님이 승리했습니다!\n 다시 시작하시겠습니까?",
                 "Game Over",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
